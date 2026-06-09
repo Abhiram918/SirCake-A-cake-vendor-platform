@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+
+{% block title %}Order #{{ order.id|stringformat:"06d" }} Tracking | SirCake 🍰{% endblock %}
+
+{% block extra_css %}
+<style>
+    .tracking-container {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2.5rem;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+
+    .status-timeline {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin-bottom: 4rem;
+        padding: 0 1rem;
+    }
+
+    .status-timeline::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: #edf2f7;
+        z-index: 1;
+    }
+
+    .status-step {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .step-dot {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: white;
+        border: 4px solid #edf2f7;
+        transition: all 0.3s ease;
+    }
+
+    .status-step.completed .step-dot {
+        background: #48bb78;
+        border-color: #48bb78;
+    }
+
+    .status-step.active .step-dot {
+        border-color: var(--highlight);
+        box-shadow: 0 0 0 4px rgba(253, 121, 121, 0.2);
+    }
+
+    .step-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    .status-step.completed .step-label,
+    .status-step.active .step-label {
+        color: var(--text-color);
+    }
+
+    .order-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        background: var(--surface-light);
+        padding: 1.2rem 2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        font-weight: 700;
+    }
+
+    .order-item {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
+    }
+
+    .item-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: var(--radius-md);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tracking-container">
+    <div style="margin-bottom: 2rem;">
+        <a href="{% url 'dashboard:customer' %}"
+            style="text-decoration: none; color: var(--text-light); font-weight: 500; display: flex; align-items: center; gap: 8px;">
+            <span>←</span> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="order-header">
+        <div>
+            <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem; letter-spacing: -0.02em;">Order #{{ order.id|stringformat:"06d" }}</h1>
+            <p style="color: var(--text-light); font-size: 1.1rem;">Placed on {{ order.created_at|date:"F d, Y at H:i" }}</p>
+        </div>
+        <div style="text-align: right;">
+            <span class="badge"
+                style="background: var(--highlight); color: white; padding: 8px 16px; font-size: 1rem; border-radius: var(--radius-full);">
+                {{ order.get_status_display }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Tracking Timeline -->
+    <div class="status-timeline">
+        {% with s=order.status %}
+        <div class="status-step {% if s == 'pending' %}active{% elif s != 'cart' %}completed{% endif %}">
+            <div class="step-dot"></div>
+            <span class="step-label">Pending</span>
+        </div>
+        <div
+            class="status-step {% if s == 'accepted' %}active{% elif s != 'cart' and s != 'pending' %}completed{% endif %}">
+            <div class="step-dot"></div>
+            <span class="step-label">Accepted</span>
+        </div>
+        <div
+            class="status-step {% if s == 'baking' %}active{% elif s != 'cart' and s != 'pending' and s != 'accepted' %}completed{% endif %}">
+            <div class="step-dot"></div>
+            <span class="step-label">Baking</span>
+        </div>
+        <div
+            class="status-step {% if s == 'ready' %}active{% elif s != 'cart' and s != 'pending' and s != 'accepted' and s != 'baking' %}completed{% endif %}">
+            <div class="step-dot"></div>
+            <span class="step-label">Ready</span>
+        </div>
+        <div class="status-step {% if s == 'out_for_delivery' %}active{% elif s == 'delivered' %}completed{% endif %}">
+            <div class="step-dot"></div>
+            <span class="step-label">Delivery</span>
+        </div>
+        <div class="status-step {% if s == 'delivered' %}completed{% endif %}">
+            <div class="step-dot"></div>
+            <span class="step-label">Delivered</span>
+        </div>
+        {% endwith %}
+    </div>
+
+    <div class="order-card">
+        <div class="card-header">Order Items</div>
+        <div class="card-body">
+            {% for item in order.items.all %}
+            <div class="order-item">
+                {% if item.cake.image %}
+                <img src="{{ item.cake.image.url }}" alt="{{ item.cake.name }}" class="item-image">
+                {% else %}
+                <div
+                    style="width: 80px; height: 80px; background: var(--surface-light); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                    🎂</div>
+                {% endif %}
+                <div style="flex: 1;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 1.15rem;">{{ item.cake.name|default:"Deleted Item" }}</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Quantity: {{ item.quantity }}</p>
+                </div>
+                <div style="text-align: right;">
+                    <strong style="font-size: 1.1rem; color: var(--text-color);">${{ item.price }}</strong>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+        <div class="order-card" style="margin-bottom: 0;">
+            <div class="card-header">Shipping Address</div>
+            <div style="padding: 1.5rem 2rem;">
+                {% if order.shipping_address %}
+                <strong style="display: block; margin-bottom: 8px;">{{ order.shipping_address.name }}</strong>
+                <p style="color: var(--text-light); line-height: 1.6; margin: 0;">
+                    {{ order.shipping_address.street_address }}<br>
+                    {{ order.shipping_address.city }}, {{ order.shipping_address.state }} - {{ order.shipping_address.pincode }}<br>
+                    Phone: {{ order.shipping_address.customer.phone_number|default:order.customer.customer_profile.phone_number|default:"N/A" }}
+                </p>
+                {% else %}
+                <p style="color: var(--text-muted);">No shipping address provided.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="order-card" style="margin-bottom: 0;">
+            <div class="card-header">Order Summary</div>
+            <div style="padding: 1.5rem 2rem;">
+                <div
+                    style="display: flex; justify-content: space-between; margin-bottom: 12px; color: var(--text-light);">
+                    <span>Subtotal</span>
+                    <span>${{ order.total_amount }}</span>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; margin-bottom: 12px; color: var(--text-light);">
+                    <span>Delivery Fee</span>
+                    <span>$0.00</span>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.05); font-weight: 800; font-size: 1.25rem; color: var(--highlight);">
+                    <span>Total</span>
+                    <span>${{ order.total_amount }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

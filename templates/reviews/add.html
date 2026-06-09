@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Rate {{ cake.name }} | SirCake 🍰{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; padding-top: 3rem; padding-bottom: 5rem;">
+    <div class="card" style="padding: 2.5rem;">
+        <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Rate this Cake</h1>
+        <p style="color: var(--text-light); margin-bottom: 2rem;">How was your experience with <strong>{{ cake.name
+                }}</strong>?</p>
+
+        <form method="POST" id="reviewForm">
+            {% csrf_token %}
+
+            <div style="margin-bottom: 2rem; text-align: center;">
+                <label style="display: block; font-weight: 600; margin-bottom: 1rem; font-size: 1.1rem;">Your
+                    Rating</label>
+
+                <div class="star-rating"
+                    style="display: flex; justify-content: center; gap: 10px; flex-direction: row-reverse;">
+                    <span class="star" data-value="5">★</span>
+                    <span class="star" data-value="4">★</span>
+                    <span class="star" data-value="3">★</span>
+                    <span class="star" data-value="2">★</span>
+                    <span class="star" data-value="1">★</span>
+                </div>
+
+                {{ form.rating }}
+                <p id="ratingText"
+                    style="font-size: 0.95rem; color: var(--highlight); margin-top: 1rem; font-weight: 600;">Excellent
+                </p>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Your Feedback</label>
+                {{ form.comment }}
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1; padding: 12px;">Submit Review</button>
+                <a href="{% url 'dashboard:customer' %}" class="btn"
+                    style="flex: 1; text-align: center; border: 1px solid var(--border-color); padding: 12px;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .star-rating {
+        font-size: 3rem;
+        cursor: pointer;
+    }
+
+    .star {
+        color: #ddd;
+        transition: transform 0.2s, color 0.2s;
+        display: inline-block;
+    }
+
+    .star:hover,
+    .star:hover~.star,
+    .star.active,
+    .star.active~.star {
+        color: #f1c40f;
+    }
+
+    .star:hover {
+        transform: scale(1.2);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        font-family: inherit;
+        font-size: 1rem;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--highlight);
+        box-shadow: 0 0 0 3px rgba(253, 121, 121, 0.1);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('id_rating_value');
+        const ratingText = document.getElementById('ratingText');
+
+        const textMap = {
+            '1': 'Poor',
+            '2': 'Fair',
+            '3': 'Good',
+            '4': 'Very Good',
+            '5': 'Excellent'
+        };
+
+        function updateStars(value) {
+            stars.forEach(s => {
+                if (parseInt(s.dataset.value) <= value) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+            ratingText.textContent = textMap[value];
+        }
+
+        // Initialize with default value (5)
+        updateStars(5);
+
+        stars.forEach(star => {
+            star.addEventListener('click', function () {
+                const value = this.dataset.value;
+                ratingInput.value = value;
+                updateStars(value);
+            });
+        });
+    });
+</script>
+{% endblock %}

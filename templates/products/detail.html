@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ cake.name }} | SirCake 🍰{% endblock %}
+
+{% block content %}
+<div class="product-page-wrapper" style="background: linear-gradient(to bottom, #fff, var(--primary-bg)); min-height: 100vh; padding-bottom: 5rem;">
+    <!-- Minimalist Header Breadcrumb -->
+    <div class="container py-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0" style="font-size: 0.85rem; letter-spacing: 0.02em;">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-muted text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'products:cake_list' %}" class="text-muted text-decoration-none">Catalog</a></li>
+                <li class="breadcrumb-item active" aria-current="page" style="color: var(--highlight); font-weight: 600;">{{ cake.name }}</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="row g-5">
+            <!-- Core Product Information (Left) -->
+            <div class="col-lg-7">
+                <!-- Large Image Showcase -->
+                <div class="image-showcase mb-5" style="border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); background: #fff; position: relative;">
+                    {% if cake.image %}
+                    <img src="{{ cake.image.url }}" alt="{{ cake.name }}" style="width: 100%; height: auto; max-height: 700px; object-fit: cover; display: block;">
+                    {% else %}
+                    <div style="aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--secondary-bg);">
+                        <span style="font-size: 8rem;">🎂</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if cake.is_eggless %}
+                    <div style="position: absolute; top: 24px; left: 24px; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: 100px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #38A169;">
+                        <span style="color: #38A169; font-weight: 700; font-size: 0.9rem;">🌿 100% EGGLESS</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Product Narrative -->
+                <div class="product-narrative px-1">
+                    <h1 style="font-size: 3.5rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 1rem; line-height: 1;">{{ cake.name }}</h1>
+                    <div class="d-flex align-items:center gap-3 mb-4">
+                         <div style="display: flex; align-items: center; gap: 4px; color: #f59e0b;">
+                            {% for i in "12345"|make_list %}
+                            <i class="bi bi-star-fill"></i>
+                            {% endfor %}
+                            <span class="ms-2 text-muted" style="font-size: 0.9rem; font-weight: 500;">({{ cake.reviews.count }} Verified Reviews)</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <h4 style="font-weight: 700; margin-bottom: 1rem; color: var(--text-color);">Artisan's Description</h4>
+                        <p style="font-size: 1.15rem; line-height: 1.8; color: var(--text-color); opacity: 0.8;">
+                            {{ cake.description|default:"This masterpiece is crafted with the finest ingredients and decorated by hand by our master bakers." }}
+                        </p>
+                    </div>
+
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <div class="card p-4 border-0 shadow-sm" style="background: rgba(255,255,255,0.5); backdrop-filter: blur(10px); border-radius: var(--radius-md);">
+                                <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.75rem; letter-spacing: 0.1em; font-weight: 700;">Weight</h6>
+                                <p class="mb-0" style="font-size: 1.25rem; font-weight: 700;">{{ cake.weight }} Kg <span style="font-size: 0.9rem; font-weight: 400;" class="text-muted">(Standard Size)</span></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card p-4 border-0 shadow-sm" style="background: rgba(255,255,255,0.5); backdrop-filter: blur(10px); border-radius: var(--radius-md);">
+                                <h6 class="text-uppercase text-muted mb-2" style="font-size: 0.75rem; letter-spacing: 0.1em; font-weight: 700;">Category</h6>
+                                <p class="mb-0" style="font-size: 1.25rem; font-weight: 700;">{{ cake.category.name|default:"Gourmet Dessert" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if cake.customization_options %}
+                    <div class="card p-4 mb-5 border-0" style="background: var(--surface-heavy); border-left: 5px solid var(--accent); border-radius: var(--radius-md);">
+                         <h5 style="margin-bottom: 0.8rem; font-weight: 700;">Personalization Options</h5>
+                         <p class="mb-0" style="font-size: 1rem; line-height: 1.6; opacity: 0.9;">{{ cake.customization_options }}</p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Reviews Section Embedded -->
+                    <div class="mt-5 pt-5 border-top">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 style="font-weight: 800;">Customer Love</h3>
+                            {% if user.role == 'customer' %}
+                            <a href="{% url 'reviews:add_review' cake.id %}" class="btn btn-secondary btn-sm">Add Feedback</a>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex flex-column gap-3">
+                            {% for review in cake.reviews.all %}
+                            <div class="card p-4 border-0 shadow-sm" style="background: #fff; border-radius: var(--radius-md);">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div style="width: 32px; height:32px; border-radius: 50%; background: var(--highlight); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem;">
+                                            {{ review.customer.username|first|upper }}
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 700; font-size: 0.9rem; line-height: 1;">{{ review.customer.username }}</div>
+                                            <div style="font-size: 0.75rem" class="text-muted">{{ review.created_at|date }}</div>
+                                        </div>
+                                    </div>
+                                    <div style="color: #f59e0b; font-size: 0.85rem;">
+                                        {% for i in "12345"|make_list %}
+                                        <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %}"></i>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <p class="mb-0 text-muted" style="font-style: italic; line-height: 1.6;">"{{ review.comment }}"</p>
+                            </div>
+                            {% empty %}
+                            <div class="text-center py-4 text-muted border border-dashed rounded" style="background: rgba(255,255,255,0.3);">
+                                No stories shared yet. Be the first to enjoy this bake!
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sticky Sidebar (Right) -->
+            <div class="col-lg-5">
+                <div class="sticky-top" style="top: 100px; z-index: 10;">
+                    <div class="card p-5 border-0 shadow-lg" style="border-radius: var(--radius-lg); background: #fff;">
+                        <div class="mb-4">
+                            <p class="text-muted text-uppercase mb-1" style="font-size: 0.75rem; letter-spacing: 0.1em; font-weight: 700;">Current Price</p>
+                            <div style="font-size: 3.5rem; font-weight: 800; color: var(--text-color); letter-spacing: -0.05em; line-height: 1;">
+                                {% if cake.discount_price and cake.discount_price > 0 %}
+                                    <span style="color: var(--highlight);">₹{{ cake.discount_price|floatformat:2 }}</span>
+                                    <span style="font-size: 1.75rem; font-weight: 500; color: var(--text-muted); text-decoration: line-through; margin-left: 1rem;">₹{{ cake.price|floatformat:2 }}</span>
+                                {% else %}
+                                    <span>₹{{ cake.price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="p-4 mb-4" style="background: var(--primary-bg); border-radius: var(--radius-md);">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div style="font-size: 1.5rem; color: var(--highlight);"><i class="bi bi-shop"></i></div>
+                                <div>
+                                    <div style="font-size: 0.8rem;" class="text-muted">Sold & Shipped by</div>
+                                    <a href="{% url 'sellers:shop_detail' cake.seller.shop_slug %}" style="text-decoration: none; font-weight: 700; color: var(--text-color); font-size: 1.1rem;">{{ cake.seller.shop_name }}</a>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div style="font-size: 1.5rem; color: #38A169;"><i class="bi bi-lightning-charge-fill"></i></div>
+                                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-color);">Instant Confirmation Ready</div>
+                            </div>
+                        </div>
+
+                        {% if user.role == 'customer' %}
+                        <form method="post" action="{% url 'orders:cart' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="cake_id" value="{{ cake.id }}">
+                            <div class="d-flex flex-column gap-3">
+                                <button type="submit" class="btn btn-primary py-3 w-100" style="font-size: 1.25rem; border-radius: var(--radius-md);">
+                                    Add to Cart
+                                </button>
+                                <a href="{% url 'products:toggle_wishlist' cake.id %}" class="btn border py-3 w-100" style="border-radius: var(--radius-md); font-weight: 600;">
+                                    {% if cake.id in user_wishlist_cake_ids %}
+                                    <i class="bi bi-heart-fill text-danger me-2"></i> In Wishlist
+                                    {% else %}
+                                    <i class="bi bi-heart me-2"></i> Save for Later
+                                    {% endif %}
+                                </a>
+                            </div>
+                        </form>
+                        {% elif not user.is_authenticated %}
+                        <div class="text-center">
+                            <a href="{% url 'accounts:login' %}" class="btn btn-primary py-3 w-100 mb-3" style="border-radius: var(--radius-md);">Log In to Purchase</a>
+                            <p style="font-size: 0.8rem;" class="text-muted">Requires a customer account to place orders.</p>
+                        </div>
+                        {% else %}
+                        <div class="text-center p-3 border rounded">
+                             <p class="mb-0 text-muted" style="font-size: 0.9rem;">Ordering is restricted to Customer accounts.</p>
+                        </div>
+                        {% endif %}
+
+                        <div class="mt-5 d-flex flex-column gap-3 pt-4 border-top">
+                            <div class="d-flex align-items-center gap-3">
+                                <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #EBF8FF; color: #3182CE; border-radius: 8px;"><i class="bi bi-shield-check"></i></div>
+                                <span style="font-size: 0.85rem;" class="text-muted">Premium Quality Guaranteed</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #F0FFF4; color: #38A169; border-radius: 8px;"><i class="bi bi-truck"></i></div>
+                                <span style="font-size: 0.85rem;" class="text-muted">Secure Pastel-Safe Delivery</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "•";
+        color: #ddd;
+    }
+    .image-showcase:hover img {
+        transform: scale(1.02);
+        transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .sticky-top {
+        transition: top 0.3s ease;
+    }
+    @media (max-width: 991.98px) {
+        .sticky-top {
+            position: static !important;
+            margin-top: 3rem;
+        }
+        h1 {
+            font-size: 2.5rem !important;
+        }
+    }
+</style>
+{% endblock %}

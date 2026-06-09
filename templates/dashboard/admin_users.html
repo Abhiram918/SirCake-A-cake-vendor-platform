@@ -1,0 +1,78 @@
+{% extends 'dashboard/admin_base.html' %}
+
+{% block admin_content %}
+        <!-- User Management Section -->
+        <h3 id="users" style="margin-bottom: 1.5rem; font-size: 1.6rem; display: flex; align-items: center; justify-content: space-between;">
+            User Management
+            <span class="badge" style="background: var(--surface-heavy); color: var(--text-color);">{{ all_users|length }} Total</span>
+        </h3>
+
+        <div class="card" style="padding: 0;">
+            <div class="table-container">
+                <table class="table-styled">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Username / Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sys_user in all_users %}
+                        <tr>
+                            <td style="font-weight: 600; color: var(--text-color);">{{ sys_user.id }}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary-bg); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; color: var(--highlight);">
+                                        {{ sys_user.username|make_list|first|upper }}
+                                    </div>
+                                    <div>
+                                        {{ sys_user.username }}
+                                        <div style="font-size: 0.8rem; color: var(--text-muted);">{{ sys_user.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" style="background: var(--surface-light); color: var(--text-color);">{{ sys_user.role|title }}</span>
+                                {% if not sys_user.is_active and not sys_user.is_superuser %}
+                                <span class="badge" style="background: #FEFCBF; color: #975A16; margin-left: 4px;">Blocked</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if sys_user.is_superuser %}
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">System Admin</span>
+                                {% else %}
+                                <div style="display: flex; gap: 8px;">
+                                    {% if sys_user.is_active %}
+                                    <form method="post" onsubmit="confirmAction(event, 'Block User', 'Are you sure you want to block this user? They will not be able to log in.', 'Block', '#DD6B20');">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="block_user">
+                                        <input type="hidden" name="id" value="{{ sys_user.id }}">
+                                        <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem; background: rgba(237, 137, 54, 0.1); color: #DD6B20; border: none;"><i class="bi bi-slash-circle-fill"></i> Block</button>
+                                    </form>
+                                    {% else %}
+                                    <form method="post" onsubmit="confirmAction(event, 'Unblock User', 'Unblock this user? This will restore their access.', 'Unblock', '#48BB78');">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="unblock_user">
+                                        <input type="hidden" name="id" value="{{ sys_user.id }}">
+                                        <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem; background: rgba(72, 187, 120, 0.1); color: #48BB78; border: none;"><i class="bi bi-check-circle-fill"></i> Unblock</button>
+                                    </form>
+                                    {% endif %}
+                                    <form method="post" onsubmit="confirmAction(event, 'Delete User', 'Are you sure you want to delete this user? This action cannot be undone.', 'Delete', 'var(--highlight)');">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="delete_user">
+                                        <input type="hidden" name="id" value="{{ sys_user.id }}">
+                                        <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem; background: rgba(253, 121, 121, 0.1); color: var(--highlight); border: none;"><i class="bi bi-trash3-fill"></i> Delete</button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+{% endblock %}

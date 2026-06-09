@@ -1,0 +1,104 @@
+{% extends 'dashboard/admin_base.html' %}
+
+{% block admin_content %}
+        <!-- Order Management Table -->
+        <h3 id="orders"
+            style="margin-bottom: 1.5rem; font-size: 1.6rem; display: flex; align-items: center; justify-content: space-between;">
+            Global Order Management
+            <div style="display: flex; gap: 0.5rem;">
+                <input type="text" class="form-control" placeholder="Search order ID..."
+                    style="width: 200px; padding: 8px 14px; font-size: 0.9rem; background: var(--white); border: var(--glass-border);">
+                <button class="btn btn-secondary" style="padding: 8px 14px; font-size: 0.9rem;">Filter</button>
+            </div>
+        </h3>
+
+        <div class="card" style="padding: 0;">
+            <div class="table-container table-responsive">
+                <table class="table-styled">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Status</th>
+                            <th>Logistics Assignment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in all_orders %}
+                        <tr>
+                            <td style="font-weight: 600; color: var(--text-color);">#{{ order.id|stringformat:"06d" }}
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div
+                                        style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary-bg); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; color: var(--highlight);">
+                                        {{ order.customer.username|make_list|first|upper }}
+                                    </div>
+                                    <div>
+                                        {{ order.customer.username }}
+                                        <div style="font-size: 0.8rem; color: var(--text-muted);">{{  order.customer.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge badge-{{ order.status|default:'default' }}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if order.deliveryassignment %}
+                                <div
+                                    style="display: flex; align-items: center; justify-content: space-between; background: rgba(72, 187, 120, 0.05); border: 1px solid rgba(72, 187, 120, 0.2); padding: 8px 12px; border-radius: var(--radius-sm);">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <i class="bi bi-bicycle" style="font-size: 1.2rem;"></i>
+                                        <div>
+                                            <strong
+                                                style="color: var(--text-color); font-size: 0.95rem; display: block;">{{ order.deliveryassignment.agent.user.username }}</strong>
+                                            <span style="font-size: 0.8rem; color: #48BB78; font-weight: 500;">Status:
+                                                {{ order.deliveryassignment.status|title }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                {% if order.status == 'ready' or order.status == 'baking' or order.status == 'accepted' %}
+                                <form method="post" style="display: flex; gap: 0.5rem; align-items: center;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="assign_delivery">
+                                    <input type="hidden" name="order_id" value="{{ order.id }}">
+                                    <select name="agent_id" class="form-control"
+                                        style="padding: 0.4rem; border-radius: 4px; font-size: 0.9rem; flex: 1; border: var(--glass-border);">
+                                        <option value="">-- Assign Courier --</option>
+                                        {% for agent in delivery_agents %}
+                                        <option value="{{ agent.id }}">{{ agent.user.username }} ({{ agent.vehicle_details }})</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" class="btn btn-secondary"
+                                        style="padding: 0.4rem 1rem; font-size: 0.9rem;">Assign</button>
+                                </form>
+                                {% elif order.status == 'delivered' %}
+                                <div
+                                    style="padding: 8px 12px; background: rgba(72, 187, 120, 0.05); border: 1px solid rgba(72, 187, 120, 0.2); border-radius: var(--radius-sm); color: #48BB78; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                                    <i class="bi bi-check-circle-fill"></i> Order Delivered completely
+                                </div>
+                                {% else %}
+                                <div
+                                    style="padding: 8px 12px; background: var(--surface-light); border-radius: var(--radius-sm); color: var(--text-muted); font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                                    <i class="bi bi-hourglass-split"></i> Bakery preparing items
+                                </div>
+                                {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" style="padding: 4rem 2rem; text-align: center;">
+                                <div style="font-size: 2.5rem; opacity: 0.5; margin-bottom: 1rem;"><i class="bi bi-clipboard2-data"></i></div>
+                                <p style="color: var(--text-light); font-size: 1.1rem;">No orders in the system yet.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+{% endblock %}

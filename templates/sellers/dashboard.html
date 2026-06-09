@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Seller Dashboard | SirCake{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    {% include 'sellers/_sidebar.html' with active_tab='dashboard' %}
+
+    <!-- Main Content -->
+    <div class="dashboard-content">
+        <header style="margin-bottom: var(--sp-4);">
+            <h1 style="font-size: 2rem;">Welcome back, {{ user.username }}!</h1>
+            <p style="color: var(--text-light);">Track your bakery's growth and manage orders.</p>
+        </header>
+
+        <!-- Metrics Grid -->
+        <div class="metric-grid">
+            <div class="metric-card">
+                <span class="metric-title">Total Revenue</span>
+                <span class="metric-value">₹{{ total_revenue }}</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-title">Average Rating</span>
+                <span class="metric-value">{{ avg_rating }}<span style="font-size: 1rem; color: #F6AD55;">
+                        ★</span></span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-title">Active Cakes</span>
+                <span class="metric-value">{{ cake_count }}</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-title">Total Orders</span>
+                <span class="metric-value">{{ order_count }}</span>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="card" style="margin-bottom: var(--sp-4);">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-2);">
+                <h3 style="font-size: 1.4rem;">Order Status Breakdown</h3>
+            </div>
+            <div style="position: relative; height: 300px; width: 100%;">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Recent Orders -->
+            <section class="col-lg-8">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-2);">
+                    <h3>Recent Orders</h3>
+                    <a href="{% url 'sellers:order_list' %}"
+                        style="color: var(--highlight); font-size: 0.9rem; font-weight: 600;">View All</a>
+                </div>
+                <div class="table-container table-responsive">
+                    <table class="table-styled">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Item</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in recent_orders %}
+                            <tr>
+                                <td>#{{ item.order.id }}</td>
+                                <td>{{ item.cake.name }} (x{{ item.quantity }})</td>
+                                <td>{{ item.order.customer.username }}</td>
+                                <td>{{ item.order.created_at|date:"M d, Y" }}</td>
+                                <td><span class="badge badge-{{ item.status }}">{{ item.status }}</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: var(--sp-4);">No orders found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Status Distribution or Actions -->
+            <aside class="col-lg-4">
+                <div class="card" style="margin-bottom: var(--sp-3);">
+                    <h3>Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+                        <a href="{% url 'sellers:cake_create' %}" class="btn btn-primary">Add New Cake</a>
+                        <a href="{% url 'sellers:profile_edit' %}" class="btn btn-secondary">Update Profile</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Status Summary</h3>
+                    <ul style="list-style: none; margin-top: 16px;">
+                        {% for status in status_summary %}
+                        <li style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span class="badge badge-{{ status.status }}">{{ status.status }}:</span>
+                            <span style="font-weight: 700;">{{ status.count }}</span>
+                        </li>
+                        {% empty %}
+                        <p style="color: var(--text-light); font-size: 0.9rem;">Start selling to see stats!</p>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ status_summary|json_script:"status-data" }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rawData = JSON.parse(document.getElementById('status-data').textContent);
+
+        if (rawData.length > 0) {
+            const labels = rawData.map(item => item.status.charAt(0).toUpperCase() + item.status.slice(1));
+            const data = rawData.map(item => item.count);
+
+            const ctx = document.getElementById('statusChart').getContext('2d');
+
+            Chart.defaults.font.family = "'Inter', 'Outfit', sans-serif";
+            Chart.defaults.color = "#718096";
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Active Orders',
+                        data: data,
+                        backgroundColor: 'rgba(253, 121, 121, 0.8)',
+                        borderColor: '#FD7979',
+                        borderWidth: 0,
+                        borderRadius: 6,
+                        barPercentage: 0.5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            padding: 12,
+                            titleFont: { size: 13 },
+                            bodyFont: { size: 13 },
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                label: function (context) {
+                                    return context.parsed.y + ' orders';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)', drawBorder: false },
+                            ticks: { stepSize: 1, padding: 10 }
+                        },
+                        x: {
+                            grid: { display: false, drawBorder: false },
+                            ticks: { padding: 10 }
+                        }
+                    },
+                    animation: {
+                        y: { duration: 2000, easing: 'easeOutQuart' }
+                    }
+                }
+            });
+        } else {
+            const container = document.getElementById('statusChart').parentElement;
+            container.innerHTML = '<div style="height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; color: var(--text-muted);"><div style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;">📊</div><p>Not enough data to generate chart</p></div>';
+        }
+    });
+</script>
+{% endblock %}

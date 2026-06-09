@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} | SirCake 🍰{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 4rem; padding-bottom: 6rem; max-width: 800px;">
+
+    <div style="margin-bottom: 3rem; text-align: center;">
+        <h1 style="font-size: 2.8rem; margin-bottom: 0.5rem; letter-spacing: -0.04em;">{{ title }}</h1>
+        <p style="color: var(--text-light); font-size: 1.1rem;">Fill in the details to showcase your bakery's finest
+            creation.</p>
+    </div>
+
+    <div class="card"
+        style="padding: 3rem; background: var(--surface-light); border: 1px solid rgba(0,0,0,0.05); position: relative; overflow: hidden;">
+        <!-- Decorative subtle gradient glow -->
+        <div
+            style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(253, 121, 121, 0.05) 0%, transparent 70%); pointer-events: none;">
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+
+                <!-- Basic Info -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+                    <div>
+                        <label class="form-label"
+                            style="font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; display: block;">Cake
+                            Name</label>
+                        {{ form.name }}
+                    </div>
+                    <div>
+                        <label class="form-label"
+                            style="font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; display: block;">Price
+                            ($)</label>
+                        {{ form.price }}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label"
+                        style="font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; display: block;">Description</label>
+                    {{ form.description }}
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: center;">
+                    <div>
+                        <label class="form-label"
+                            style="font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; display: block;">Weight /
+                            Size</label>
+                        {{ form.weight }}
+                    </div>
+                    <div style="padding-top: 25px;">
+                        <div class="form-check" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            {{ form.is_eggless }}
+                            <label class="form-check-label"
+                                style="font-weight: 500; font-size: 0.95rem; cursor: pointer;">This cake is Eggless
+                                🌿</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label"
+                        style="font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; display: block;">Cake Preview
+                        Image</label>
+                    <div style="background: var(--white); border: 2px dashed rgba(0,0,0,0.1); border-radius: var(--radius-md); padding: 1.5rem; transition: var(--transition-fast);"
+                        onmouseover="this.style.borderColor='var(--highlight)'"
+                        onmouseout="this.style.borderColor='rgba(0,0,0,0.1)'">
+                        {{ form.image }}
+                        <p style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">Recommended size:
+                            1200x800px. High resolution photos sell 3x faster!</p>
+                        {% if cake and cake.image %}
+                        <div
+                            style="margin-top: 15px; display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--surface-heavy); border-radius: var(--radius-sm);">
+                            <img src="{{ cake.image.url }}"
+                                style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                            <span style="font-size: 0.85rem; color: var(--text-color);">Current photo: {{
+                                cake.image.name }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label"
+                        style="font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; display: block;">Customization
+                        Details (Optional)</label>
+                    {{ form.customization_options }}
+                </div>
+
+                <div
+                    style="padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); display: flex; gap: 1rem; justify-content: flex-end;">
+                    <a href="{% url 'sellers:dashboard' %}" class="btn"
+                        style="background: transparent; color: var(--text-muted); border: 1px solid rgba(0,0,0,0.1); padding: 12px 24px;">Cancel</a>
+                    <button type="submit" class="btn btn-primary"
+                        style="padding: 12px 32px; font-weight: 600; font-size: 1rem;">{{ button_text }}</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: var(--white);
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--highlight);
+        box-shadow: 0 0 0 4px rgba(253, 121, 121, 0.1);
+    }
+
+    .form-check-input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}

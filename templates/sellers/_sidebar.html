@@ -1,0 +1,28 @@
+<aside class="sidebar">
+    <div style="margin-bottom: var(--sp-4); padding-left: 12px;">
+        <h2 style="font-size: 1.2rem; color: var(--highlight);">{{ user.seller_profile.shop_name|default:"My Shop" }}
+        </h2>
+        <p style="font-size: 0.8rem; color: var(--text-light);">Seller Partner</p>
+    </div>
+    <nav>
+        <a href="{% url 'sellers:dashboard' %}"
+            class="sidebar-link {% if active_tab == 'dashboard' %}active{% endif %}">
+            Dashboard
+        </a>
+        <a href="{% url 'sellers:cake_list' %}" class="sidebar-link {% if active_tab == 'cakes' %}active{% endif %}">
+            My Cakes
+        </a>
+        <a href="{% url 'sellers:order_list' %}" class="sidebar-link {% if active_tab == 'orders' %}active{% endif %}">
+            Orders
+        </a>
+        <a href="{% url 'sellers:profile_edit' %}"
+            class="sidebar-link {% if active_tab == 'settings' %}active{% endif %}">
+            Shop Settings
+        </a>
+        {% if user.seller_profile.shop_slug %}
+        <a href="{% url 'sellers:shop_detail' user.seller_profile.shop_slug %}" class="sidebar-link" target="_blank">
+            View Public Shop
+        </a>
+        {% endif %}
+    </nav>
+</aside>

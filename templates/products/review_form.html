@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Review {{ cake.name }} | SirCake 🍰{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; padding-top: 3rem; padding-bottom: 5rem;">
+    <div class="card" style="padding: 2.5rem;">
+        <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Rate this Cake</h1>
+        <p style="color: var(--text-light); margin-bottom: 2rem;">How was your experience with <strong>{{ cake.name }}</strong>?</p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Rating (1-5)</label>
+                {{ form.rating }}
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">1 = Poor, 5 = Excellent</p>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Your Review</label>
+                {{ form.comment }}
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+                <a href="{% url 'dashboard:customer' %}" class="btn btn-secondary">Maybe Later</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

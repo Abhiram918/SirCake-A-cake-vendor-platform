@@ -1,0 +1,506 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Log In | SirCake{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== Login Page Styles ===== */
+    .login-wrapper {
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem 1rem;
+    }
+
+    .login-card {
+        max-width: 960px;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        border-radius: var(--radius-lg);
+        box-shadow: 0 25px 60px rgba(253, 121, 121, 0.12), 0 8px 20px rgba(0, 0, 0, 0.06);
+        background: var(--white);
+        border: none;
+        animation: loginCardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes loginCardIn {
+        from {
+            opacity: 0;
+            transform: translateY(24px) scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* --- Left Image Panel --- */
+    .login-image-panel {
+        flex: 1;
+        position: relative;
+        min-height: auto;
+        overflow: hidden;
+    }
+
+    .login-image-panel img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 6s ease;
+    }
+
+    .login-card:hover .login-image-panel img {
+        transform: scale(1.04);
+    }
+
+    .login-image-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to top,
+            rgba(29, 15, 10, 0.75) 0%,
+            rgba(29, 15, 10, 0.35) 40%,
+            rgba(253, 121, 121, 0.10) 100%
+        );
+        z-index: 1;
+    }
+
+    .login-image-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1.8rem 2rem 1.5rem;
+        z-index: 2;
+        color: #fff;
+    }
+
+    .login-image-content h2 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.4rem;
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+    }
+
+    .login-image-content p {
+        font-size: 0.88rem;
+        opacity: 0.85;
+        line-height: 1.5;
+        max-width: 320px;
+    }
+
+    .login-image-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 6px 14px;
+        border-radius: var(--radius-full);
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 0.6rem;
+    }
+
+    .login-image-badge i {
+        font-size: 0.85rem;
+        color: var(--accent);
+    }
+
+    /* --- Right Form Panel --- */
+    .login-form-panel {
+        flex: 1.1;
+        padding: 2rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: var(--white);
+        position: relative;
+    }
+
+    .login-form-panel::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(253, 172, 172, 0.12), transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .login-brand-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--highlight), var(--accent));
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        box-shadow: 0 6px 16px rgba(253, 121, 121, 0.25);
+    }
+
+    .login-brand-icon i {
+        font-size: 1.1rem;
+        color: #fff;
+    }
+
+    .login-form-panel h3 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.03em;
+        color: var(--text-color);
+    }
+
+    .login-subtitle {
+        color: var(--text-light);
+        font-size: 0.88rem;
+        margin-bottom: 1.2rem;
+        line-height: 1.4;
+    }
+
+    /* Form Styling */
+    .login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+    }
+
+    .login-form p {
+        margin-bottom: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .login-form label {
+        font-weight: 600;
+        font-size: 0.88rem;
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        letter-spacing: 0.01em;
+    }
+
+    .login-form label i {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .login-form input[type="text"],
+    .login-form input[type="password"] {
+        padding: 10px 14px;
+        border: 2px solid #f0f0f0;
+        border-radius: var(--radius-md);
+        font-family: inherit;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        background: #fafafa;
+        outline: none;
+        color: var(--text-color);
+    }
+
+    .login-form input[type="text"]:focus,
+    .login-form input[type="password"]:focus {
+        border-color: var(--highlight);
+        background: var(--white);
+        box-shadow: 0 0 0 4px rgba(253, 121, 121, 0.08);
+    }
+
+    .login-form input[type="text"]::placeholder,
+    .login-form input[type="password"]::placeholder {
+        color: var(--text-muted);
+    }
+
+    .login-extras-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.25rem;
+    }
+
+    .login-remember {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.88rem;
+        color: var(--text-light);
+        cursor: pointer;
+        font-weight: 400;
+    }
+
+    .login-remember input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--highlight);
+        cursor: pointer;
+    }
+
+    .login-forgot {
+        font-size: 0.88rem;
+        color: var(--highlight);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+
+    .login-forgot:hover {
+        color: #e85656;
+    }
+
+    .login-submit-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        font-family: inherit;
+        border: none;
+        border-radius: var(--radius-full);
+        background: linear-gradient(145deg, var(--highlight), #FA6666);
+        color: var(--white);
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 6px 18px rgba(253, 121, 121, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 0.3rem;
+        letter-spacing: 0.01em;
+    }
+
+    .login-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px rgba(253, 121, 121, 0.4);
+    }
+
+    .login-submit-btn:active {
+        transform: translateY(0);
+    }
+
+    .login-submit-btn i {
+        font-size: 1.1rem;
+        transition: transform 0.2s ease;
+    }
+
+    .login-submit-btn:hover i {
+        transform: translateX(3px);
+    }
+
+    /* Divider */
+    .login-divider {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin: 0.8rem 0;
+        color: var(--text-muted);
+        font-size: 0.82rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .login-divider::before,
+    .login-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e8e8e8, transparent);
+    }
+
+    /* Register CTA */
+    .login-register-cta {
+        text-align: center;
+        font-size: 0.92rem;
+        color: var(--text-light);
+    }
+
+    .login-register-cta a {
+        color: var(--highlight);
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s;
+        position: relative;
+    }
+
+    .login-register-cta a::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--highlight);
+        transition: width 0.25s ease;
+    }
+
+    .login-register-cta a:hover::after {
+        width: 100%;
+    }
+
+    /* Error list styling */
+    .errorlist {
+        color: #e53e3e;
+        font-size: 0.82rem;
+        list-style-type: none;
+        padding: 0;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .errorlist li::before {
+        content: '\F33A';
+        font-family: 'bootstrap-icons';
+        margin-right: 4px;
+        font-size: 0.78rem;
+    }
+
+    /* Trust indicators */
+    .login-trust-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 1rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .trust-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .trust-item i {
+        font-size: 0.85rem;
+        color: var(--accent);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+        .login-card {
+            flex-direction: column;
+            max-width: 480px;
+        }
+
+        .login-image-panel {
+            min-height: 240px;
+        }
+
+        .login-form-panel {
+            padding: 2.5rem 2rem;
+        }
+
+        .login-image-content h2 {
+            font-size: 1.6rem;
+        }
+
+        .login-trust-row {
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .login-form-panel {
+            padding: 2rem 1.5rem;
+        }
+
+        .login-extras-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+
+        <!-- Left Image Panel -->
+        <div class="login-image-panel">
+            <img src="{% static 'images/login_bakery.png' %}" alt="Premium artisanal cakes and pastries">
+            <div class="login-image-overlay"></div>
+            <div class="login-image-content">
+                <div class="login-image-badge">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    Secure Login
+                </div>
+                <h2>Welcome Back<br>to SirCake.</h2>
+                <p>Track your premium pastel orders or manage your independent bakery storefront.</p>
+            </div>
+        </div>
+
+        <!-- Right Form Panel -->
+        <div class="login-form-panel">
+            <div class="login-brand-icon">
+                <i class="bi bi-shop"></i>
+            </div>
+
+            <h3>Account Login</h3>
+            <p class="login-subtitle">Enter your credentials to access your dashboard.</p>
+
+            <form method="post" class="login-form">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <div class="login-extras-row">
+                    <label class="login-remember">
+                        <input type="checkbox"> Remember me
+                    </label>
+                    <a href="#" class="login-forgot">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="login-submit-btn">
+                    Sign In
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="login-divider">or</div>
+
+            <div class="login-register-cta">
+                Don't have an account yet?
+                <a href="{% url 'accounts:register_customer' %}">Create a new account</a>
+            </div>
+
+            <div class="login-trust-row">
+                <span class="trust-item">
+                    <i class="bi bi-shield-check"></i> SSL Secured
+                </span>
+                <span class="trust-item">
+                    <i class="bi bi-lock-fill"></i> Encrypted
+                </span>
+                <span class="trust-item">
+                    <i class="bi bi-star-fill"></i> Trusted
+                </span>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shop Settings | SirCake{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    {% include 'sellers/_sidebar.html' with active_tab='settings' %}
+
+    <div class="dashboard-content">
+        <header style="margin-bottom: var(--sp-4);">
+            <h1 style="font-size: 2rem;">Shop Settings</h1>
+            <p style="color: var(--text-light);">Define your bakery's visual identity and contact info.</p>
+        </header>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row g-4">
+                <!-- Basic Info -->
+                <div class="col-lg-6">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <h3 class="mb-4 d-flex align-items-center gap-2" style="font-size: 1.25rem;">
+                                <i class="bi bi-info-circle text-primary"></i> Basic Information
+                            </h3>
+                            <div class="form-group mb-4">
+                                <label class="form-label d-flex align-items-center gap-2"><i class="bi bi-shop text-muted"></i> Shop Name</label>
+                                {{ form.shop_name }}
+                            </div>
+                            <div class="form-group mb-4">
+                                <label class="form-label d-flex align-items-center gap-2"><i class="bi bi-telephone text-muted"></i> Phone Number</label>
+                                {{ form.phone_number }}
+                            </div>
+                            <div class="form-group mb-4">
+                                <label class="form-label d-flex align-items-center gap-2"><i class="bi bi-geo-alt text-muted"></i> Shop Address</label>
+                                {{ form.address }}
+                            </div>
+                            <div class="form-group mb-0">
+                                <label class="form-label d-flex align-items-center gap-2"><i class="bi bi-card-text text-muted"></i> About the Bakery</label>
+                                {{ form.shop_description }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Branding -->
+                <div class="col-lg-6">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <h3 class="mb-4 d-flex align-items-center gap-2" style="font-size: 1.25rem;">
+                                <i class="bi bi-palette text-primary"></i> Branding & Assets
+                            </h3>
+                            <div class="form-group mb-4 text-center text-lg-start">
+                                <label class="form-label text-start d-flex align-items-center gap-2"><i class="bi bi-image text-muted"></i> Shop Logo</label>
+                                <div class="d-flex flex-column flex-lg-row align-items-center gap-3 mt-2">
+                                    {% if user.seller_profile.shop_logo %}
+                                    <div class="p-2 bg-white rounded shadow-sm border">
+                                        <img src="{{ user.seller_profile.shop_logo.url }}"
+                                            style="height: 80px; width: 80px; object-fit: cover; border-radius: var(--radius-sm);">
+                                    </div>
+                                    {% else %}
+                                    <div class="p-2 bg-light rounded border text-muted d-flex align-items-center justify-content: center;" style="height: 80px; width: 80px;">
+                                        <i class="bi bi-camera" style="font-size: 2rem;"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="flex-grow-1 w-100">
+                                        {{ form.shop_logo }}
+                                        <small class="text-muted d-block mt-1">1:1 square ratio recommended.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label class="form-label d-flex align-items-center gap-2"><i class="bi bi-pennant text-muted"></i> Shop Banner</label>
+                                {% if user.seller_profile.shop_banner %}
+                                <div class="mb-3 p-2 bg-white rounded shadow-sm border">
+                                    <img src="{{ user.seller_profile.shop_banner.url }}"
+                                        style="height: 120px; width: 100%; object-fit: cover; border-radius: var(--radius-sm);">
+                                </div>
+                                {% endif %}
+                                {{ form.shop_banner }}
+                            </div>
+
+                            <div class="p-3 bg-light rounded d-flex align-items-start gap-3 mt-4 border-start border-4 border-primary">
+                                <i class="bi bi-lightbulb-fill text-warning mt-1"></i>
+                                <p class="mb-0" style="font-size: 0.85rem; color: var(--text-color); font-weight: 500;">
+                                    <strong>Optimization Tip:</strong> Stores with high-quality banners see 40% higher customer engagement.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-3 justify-content-end">
+                <button type="submit" class="btn btn-primary d-flex align-items-center gap-2" style="padding: 12px 32px;">
+                    <i class="bi bi-check2-circle"></i> Save Settings
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        border-color: var(--highlight);
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(253, 121, 121, 0.1);
+    }
+</style>
+{% endblock %}

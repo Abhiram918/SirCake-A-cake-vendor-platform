@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}Delivery Agent Dashboard | SirCake{% endblock %}
+
+{% block extra_css %}
+<style>
+    .badge-pending {
+        background: #FEFCBF;
+        color: #975A16;
+    }
+
+    .badge-accepted {
+        background: #EBF8FF;
+        color: #2B6CB0;
+    }
+
+    .badge-completed {
+        background: #C6F6D5;
+        color: #22543D;
+    }
+
+    .badge-default {
+        background: var(--primary-bg);
+        color: var(--text-color);
+    }
+
+    .strip-completed {
+        background: #48BB78;
+    }
+
+    .strip-accepted {
+        background: #4299E1;
+    }
+
+    .strip-default {
+        background: var(--highlight);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <div class="sidebar">
+        <!-- Agent Profile Summary -->
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div
+                style="width: 80px; height: 80px; border-radius: 50%; background: var(--primary-bg); color: var(--highlight); font-size: 2rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; border: 3px solid white; box-shadow: 0 4px 12px rgba(253, 121, 121, 0.15);">
+                <i class="bi bi-scooter"></i>
+            </div>
+            <h3 style="font-size: 1.2rem; color: var(--text-color); margin-bottom: 4px;">{{ user.get_full_name|default:user.username }}</h3>
+            <span class="badge" style="background: rgba(72, 187, 120, 0.1); color: #48BB78;">Active Courier</span>
+        </div>
+
+        <div
+            style="background: var(--surface-light); border-radius: var(--radius-md); padding: 1.2rem; margin-bottom: 2rem;">
+            <div style="margin-bottom: 1rem;">
+                <span
+                    style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Vehicle</span>
+                <div style="color: var(--text-color); font-weight: 500; margin-top: 4px;">{{ user.delivery_profile.vehicle_details }}</div>
+            </div>
+            <div>
+                <span
+                    style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Contact</span>
+                <div style="color: var(--text-color); font-weight: 500; margin-top: 4px;">{{ user.delivery_profile.phone_number }}</div>
+            </div>
+        </div>
+
+        <a href="{% url 'delivery:dashboard' %}" class="sidebar-link active">Active Routes</a>
+        <a href="{% url 'delivery:history' %}" class="sidebar-link">Delivery History</a>
+    </div>
+
+    <div class="dashboard-content">
+        <h2 style="margin-bottom: 0.5rem; font-size: 2.2rem; letter-spacing: -0.02em;">Route Dashboard</h2>
+        <p style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 3rem;">Manage your current active delivery
+            assignments.</p>
+
+        <h3 id="active-routes"
+            style="margin-bottom: 1.5rem; font-size: 1.5rem; display: flex; align-items: center; gap: 12px;">
+            <span>Current Assignments</span>
+            {% if assignments.count > 0 %}
+            <span class="badge" style="background: var(--primary-bg); color: var(--text-color);">{{ assignments.count }}
+                Active</span>
+            {% endif %}
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            {% for assignment in assignments %}
+            <div class="card" style="padding: 0; overflow: hidden; position: relative;">
+                <!-- Status Strip -->
+                <div style="position: absolute; top: 0; left: 0; bottom: 0; width: 6px;"
+                    class="{% if assignment.status == 'completed' %}strip-completed{% elif assignment.status == 'accepted' %}strip-accepted{% else %}strip-default{% endif %}">
+                </div>
+
+                <div
+                    style="padding: 2rem; padding-left: 2.5rem; display: grid; grid-template-columns: 1fr 350px; gap: 3rem;">
+
+                    <!-- Left: Order Details & Customer Info -->
+                    <div>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                            <div>
+                                <h4
+                                    style="font-size: 1.4rem; color: var(--text-color); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                                    Order #{{ assignment.order.id|stringformat:"06d" }}
+                                </h4>
+                                <p style="color: var(--text-muted); font-size: 0.9rem;">Assigned: {{ assignment.assigned_at|date:"M d, g:i a" }}</p>
+                            </div>
+
+                            <span class="badge badge-{{ assignment.status|default:'default' }}"
+                                style="font-size: 0.85rem; padding: 6px 12px;">
+                                {{ assignment.status|title }}
+                            </span>
+                        </div>
+
+                        <!-- Address Card -->
+                        <div
+                            style="background: var(--surface-light); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1rem;">
+                                <div
+                                    style="width: 32px; height: 32px; border-radius: 50%; background: var(--white); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: var(--shadow-sm);">
+                                    <i class="bi bi-geo-alt-fill" style="color: var(--highlight);"></i></div>
+                                <div>
+                                    <h5 style="font-size: 1.05rem; margin-bottom: 2px;">Delivery Destination</h5>
+                                    <span style="font-size: 0.85rem; color: var(--text-muted);">Customer: {{ assignment.order.customer.get_full_name|default:assignment.order.customer.username }}</span>
+                                </div>
+                            </div>
+                            <p
+                                style="font-size: 1.05rem; color: var(--text-color); line-height: 1.5; margin-left: 44px;">
+                                {{ assignment.order.customer.customer_profile.address }}
+                            </p>
+                            <div
+                                style="margin-left: 44px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed rgba(0,0,0,0.1); display: flex; align-items: center; gap: 8px;">
+                                <span><i class="bi bi-telephone-fill" style="color: var(--text-muted);"></i></span>
+                                <a href="tel:{{ assignment.order.customer.customer_profile.phone_number }}"
+                                    style="color: var(--primary-color); font-weight: 500; text-decoration: none;">
+                                    {{ assignment.order.customer.customer_profile.phone_number }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Action Center -->
+                    <div
+                        style="background: var(--white); border-left: 1px solid rgba(0,0,0,0.05); padding-left: 2rem; display: flex; flex-direction: column; justify-content: center;">
+                        <h5 style="font-size: 1.1rem; margin-bottom: 1.2rem; color: var(--text-color);">Update Status
+                        </h5>
+
+                        <form method="post" style="display: flex; flex-direction: column; gap: 1.2rem;">
+                            {% csrf_token %}
+                            <input type="hidden" name="assignment_id" value="{{ assignment.id }}">
+
+                            <div>
+                                <label
+                                    style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 500;">Assignment
+                                    Phase</label>
+                                <select name="status" class="form-control"
+                                    style="width: 100%; border: var(--glass-border); padding: 10px; font-size: 0.95rem; border-radius: var(--radius-sm); background: var(--surface-light);">
+                                    <option value="pending" {% if assignment.status == 'pending' %}selected{% endif %}>
+                                        Pending Acceptance</option>
+                                    <option value="accepted" {% if assignment.status == 'accepted' %}selected{% endif %}>
+                                        Accepted & Routing</option>
+                                    <option value="completed" {% if assignment.status == 'completed' %}selected{% endif %}>
+                                        Delivered Successfully</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label
+                                    style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 500;">Global
+                                    Order Status</label>
+                                <select name="order_status" class="form-control"
+                                    style="width: 100%; border: var(--glass-border); padding: 10px; font-size: 0.95rem; border-radius: var(--radius-sm); background: var(--surface-light);">
+                                    <option value="{{ assignment.order.status }}">{{ assignment.order.get_status_display }} (Current phase)</option>
+                                    <option value="picked_up">Picked up from Bakery</option>
+                                    <option value="out_for_delivery">Out for Delivery</option>
+                                    <option value="delivered">Delivered to Customer</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary"
+                                style="width: 100%; margin-top: 0.5rem; padding: 12px; font-weight: 500;">
+                                Sync Status Updates
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            {% empty %}
+            <div
+                style="text-align: center; padding: 4rem 2rem; background: var(--white); border-radius: var(--radius-lg); border: 2px dashed rgba(0,0,0,0.05);">
+                <div style="font-size: 3rem; opacity: 0.5; margin-bottom: 1rem;"><i class="bi bi-inbox"></i></div>
+                <h4 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--text-color);">No Active Assignments
+                </h4>
+                <p style="color: var(--text-light); font-size: 1.05rem;">You are all caught up. New delivery assignments
+                    will appear here.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    @media (max-width: 900px) {
+        .dashboard-layout .dashboard-content .card>div {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+            padding: 1.5rem !important;
+            padding-left: 2rem !important;
+        }
+
+        .dashboard-layout .dashboard-content .card>div>div:last-child {
+            border-left: none !important;
+            padding-left: 0 !important;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding-top: 2rem;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Premium Modern Hero Section -->
+<section
+    style="position: relative; overflow: hidden; min-height: 85vh; display: flex; align-items: center; background: radial-gradient(circle at 80% 20%, rgba(254,234,201,0.4) 0%, rgba(255,205,201,0.1) 60%, var(--surface-light) 100%);">
+
+    <!-- Abstract Background Elements -->
+    <div
+        style="position: absolute; top: -10%; left: -5%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--accent) 0%, transparent 60%); opacity: 0.08; border-radius: 50%; filter: blur(40px); z-index: 0;">
+    </div>
+    <div
+        style="position: absolute; bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, var(--highlight) 0%, transparent 60%); opacity: 0.05; border-radius: 50%; filter: blur(60px); z-index: 0;">
+    </div>
+
+    <div class="container py-lg-5" style="position: relative; z-index: 10;">
+        <div class="row align-items-center g-5 text-center text-lg-start">
+
+            <!-- Hero Text Content -->
+            <div class="col-lg-6 px-lg-4">
+                <div
+                    style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); padding: 6px 16px; border-radius: 100px; border: 1px solid rgba(255, 255, 255, 0.5); margin-bottom: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                    <span
+                        style="display: block; width: 8px; height: 8px; border-radius: 50%; background: var(--highlight); box-shadow: 0 0 10px var(--highlight);"></span>
+                    <span
+                        style="font-size: 0.9rem; font-weight: 600; color: var(--text-color); letter-spacing: 0.02em;">Gourmet
+                        Delivery Now Live</span>
+                </div>
+
+                <h1
+                    style="font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 800; color: var(--text-color); margin-bottom: 1.5rem; letter-spacing: -0.04em; line-height: 1.1;">
+                    The marketplace for <br />
+                    <span style="position: relative; white-space: nowrap;">
+                        <span
+                            style="position: relative; z-index: 2; background: linear-gradient(135deg, var(--highlight), var(--accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">exquisite
+                            bakes.</span>
+                        <svg style="position: absolute; bottom: -4px; left: 0; width: 100%; height: 12px; z-index: 1;"
+                            viewBox="0 0 200 12" preserveAspectRatio="none">
+                            <path d="M0,8 Q100,0 200,8 L200,12 L0,12 Z" fill="rgba(253, 121, 121, 0.2)" />
+                        </svg>
+                    </span>
+                </h1>
+
+                <p
+                    style="font-size: 1.25rem; color: var(--text-light); margin-bottom: 3rem; line-height: 1.8; max-width: 90%;">
+                    Discover, customized, and instantly order premium desserts crafted by independent master bakers.
+                    Delivered flawlessly to your doorstep.
+                </p>
+
+                <div
+                    style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.6); padding: 8px; border-radius: 100px; display: flex; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 3rem;" class="mx-auto mx-lg-0">
+                    <form action="{% url 'products:cake_list' %}" method="get" style="display: flex; width: 100%;">
+                        <div style="padding: 0 20px; display: flex; align-items: center; color: var(--text-muted);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </div>
+                        <input type="text" name="q" placeholder="Search for chocolate, vegan, fruit..."
+                            style="flex: 1; border: none; background: transparent; padding: 12px 0; font-size: 1.1rem; outline: none; color: var(--text-color);">
+                        <button type="submit" class="btn btn-primary"
+                            style="border-radius: 100px; padding: 14px 32px; font-weight: 600; font-size: 1.05rem;">Find
+                            Cakes</button>
+                    </form>
+                </div>
+
+                <div
+                    style="display: flex; gap: 2rem; align-items: center; justify-content: center; justify-content: lg-start; font-size: 0.95rem; color: var(--text-muted);" class="justify-content-center justify-content-lg-start">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="color: var(--highlight);"><i class="bi bi-star-fill"></i></span> 4.9/5 Average Rating
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 1.2rem;"><i class="bi bi-person-badge"></i></span> 50+ Top Bakers
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Image Showcase -->
+            <div class="col-lg-6 d-none d-lg-flex position-relative justify-content-center align-items-center">
+                <div class="hero-image-wrapper">
+                    {% if user.is_authenticated %}
+                    <img src="{% static 'images/premium_cake_hero.png' %}" alt="Premium Cake Design"
+                        class="hero-cake-img"
+                        style="border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); width: 100%; max-width: 550px; object-fit: cover; aspect-ratio: 4/5; display: block;">
+                    {% else %}
+                    <img src="{% static 'images/premium_cake_hero.png' %}"
+                        onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'550\' height=\'680\'><rect width=\'550\' height=\'680\' fill=\'%23FFEAE0\'/><text x=\'50%\' y=\'50%\' font-size=\'40\' text-anchor=\'middle\' dominant-baseline=\'middle\' font-family=\'sans-serif\'>🍰</text></svg>'"
+                        alt="Premium Cake" class="hero-cake-img"
+                        style="border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); width: 100%; max-width: 550px; object-fit: cover; aspect-ratio: 4/5;">
+                    {% endif %}
+                </div>
+                <!-- Floating Info Cards -->
+                <div class="floating-card float-1"
+                    style="position: absolute; top: 10%; left: -5%; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 16px 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.8); display: flex; align-items: center; gap: 12px;">
+                    <div
+                        style="background: #EBF8FF; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="bi bi-truck"></i></div>
+                    <div>
+                        <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-color);">Same-day</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Delivery Available</div>
+                    </div>
+                </div>
+                <div class="floating-card float-2"
+                    style="position: absolute; bottom: 15%; right: -10%; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 16px 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.8); display: flex; align-items: center; gap: 12px;">
+                    <div
+                        style="background: #FEFCBF; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="bi bi-star-fill" style="color: #975A16;"></i></div>
+                    <div>
+                        <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-color);">Artisanal</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Handcrafted treats</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Ecosystem -->
+<section style="background: var(--white); padding: 8rem 2rem;">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 5rem; max-width: 600px; margin-inline: auto;">
+            <span
+                style="color: var(--highlight); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem; margin-bottom: 1rem; display: block;">The
+                Ecosystem</span>
+            <h2
+                style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 1.5rem; letter-spacing: -0.02em;">
+                A unified platform for all things sweet.</h2>
+            <p style="color: var(--text-light); font-size: 1.15rem; line-height: 1.7;">Whether you want to enjoy,
+                create, or deliver, SirCake provides the seamless infrastructure you need.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Customer Card -->
+            <div class="col-lg-4 col-md-6 d-flex">
+                <div class="ecosystem-card card w-100"
+                    style="text-align: left; padding: 3rem; position: relative; overflow: hidden; display: flex; flex-direction: column;">
+                <div style="position: absolute; top:0; right: 0; padding: 1.5rem; font-size: 3rem; opacity: 0.05;"><i class="bi bi-bag-fill"></i>
+                </div>
+                <div class="icon-wrap"
+                    style="background: linear-gradient(135deg, var(--accent), var(--highlight)); margin-bottom: 2rem;">
+                    <i class="bi bi-cake2-fill"></i>
+                </div>
+                <h3 style="font-size: 1.8rem; margin-bottom: 1rem; font-weight: 700;">For Connoisseurs</h3>
+                <p style="color: var(--text-light); margin-bottom: 2rem; line-height: 1.7; flex: 1;">Access the city's
+                    finest independent bakeries via one app. Filter by dietary needs, schedule deliveries, and track
+                    your orders in real-time.</p>
+                <a href="{% url 'products:cake_list' %}" class="eco-link">Explore the Catalog <span
+                        class="arrow">→</span></a>
+                </div>
+            </div>
+
+            <!-- Seller Card -->
+            <div class="col-lg-4 col-md-6 d-flex">
+                <div class="ecosystem-card card w-100"
+                    style="text-align: left; padding: 3rem; position: relative; overflow: hidden; display: flex; flex-direction: column;">
+                <div style="position: absolute; top:0; right: 0; padding: 1.5rem; font-size: 3rem; opacity: 0.05;"><i class="bi bi-shop"></i>
+                </div>
+                <div class="icon-wrap"
+                    style="background: linear-gradient(135deg, #F6AD55, #DD6B20); margin-bottom: 2rem;">
+                    <i class="bi bi-person-badge-fill"></i>
+                </div>
+                <h3 style="font-size: 1.8rem; margin-bottom: 1rem; font-weight: 700;">For Creators</h3>
+                <p style="color: var(--text-light); margin-bottom: 2rem; line-height: 1.7; flex: 1;">Build a stunning
+                    digital storefront in minutes. We handle the payments, exposure, and delivery logistics so you can
+                    focus on baking.</p>
+                <a href="{% url 'accounts:register_seller' %}" class="eco-link" style="color: #DD6B20;">Become a Partner
+                    <span class="arrow">→</span></a>
+                </div>
+            </div>
+
+            <!-- Delivery Card -->
+            <div class="col-lg-4 col-md-12 d-flex">
+                <div class="ecosystem-card card w-100"
+                    style="text-align: left; padding: 3rem; position: relative; overflow: hidden; display: flex; flex-direction: column;">
+                <div style="position: absolute; top:0; right: 0; padding: 1.5rem; font-size: 3rem; opacity: 0.05;"><i class="bi bi-bicycle"></i>
+                </div>
+                <div class="icon-wrap"
+                    style="background: linear-gradient(135deg, #48BB78, #38A169); margin-bottom: 2rem;">
+                    <i class="bi bi-rocket-takeoff-fill"></i>
+                </div>
+                <h3 style="font-size: 1.8rem; margin-bottom: 1rem; font-weight: 700;">For Logistics</h3>
+                <p style="color: var(--text-light); margin-bottom: 2rem; line-height: 1.7; flex: 1;">Join our
+                    specialized delivery fleet. Enjoy flexible hours, transparent earnings, and advanced routing via the
+                    agent dashboard.</p>
+                <a href="{% url 'accounts:register_delivery' %}" class="eco-link" style="color: #38A169;">Drive With Us
+                    <span class="arrow">→</span></a>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block extra_css %}
+<style>
+    /* Home Page Specific Animations and Styles */
+    @keyframes float1 {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-15px);
+        }
+    }
+
+    @keyframes float2 {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(15px);
+        }
+    }
+
+    .hero-cake-img {
+        transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .hero-image-wrapper:hover .hero-cake-img {
+        transform: scale(1.02) translateY(-10px);
+    }
+
+    .floating-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .floating-card:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .float-1 {
+        animation: float1 6s ease-in-out infinite;
+    }
+
+    .float-2 {
+        animation: float2 7s ease-in-out infinite reverse;
+    }
+
+    /* Ecosystem Card Styles */
+    .ecosystem-card {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        background: var(--white);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    .ecosystem-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .ecosystem-card .icon-wrap {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .eco-link {
+        color: var(--highlight);
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.05rem;
+        transition: gap 0.3s ease;
+    }
+
+    .eco-link:hover {
+        gap: 12px;
+    }
+</style>
+{% endblock %}
+{% endblock content %}

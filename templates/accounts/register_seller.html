@@ -1,0 +1,530 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Partner with SirCake | SirCake{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== Seller Registration Page Styles ===== */
+    .sreg-wrapper {
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .sreg-card {
+        max-width: 1100px;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        border-radius: var(--radius-lg);
+        box-shadow: 0 25px 60px rgba(253, 121, 121, 0.12), 0 8px 20px rgba(0, 0, 0, 0.06);
+        background: var(--white);
+        border: none;
+        animation: sregCardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes sregCardIn {
+        from { opacity: 0; transform: translateY(24px) scale(0.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* --- Left Image Panel --- */
+    .sreg-image-panel {
+        flex: 0 0 370px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sreg-image-panel img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 6s ease;
+    }
+
+    .sreg-card:hover .sreg-image-panel img {
+        transform: scale(1.04);
+    }
+
+    .sreg-image-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to top,
+            rgba(20, 12, 8, 0.82) 0%,
+            rgba(20, 12, 8, 0.35) 50%,
+            rgba(253, 121, 121, 0.06) 100%
+        );
+        z-index: 1;
+    }
+
+    .sreg-image-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 2rem 2rem 1.6rem;
+        z-index: 2;
+        color: #fff;
+    }
+
+    .sreg-image-content h2 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.9rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.5rem;
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+    }
+
+    .sreg-image-content p {
+        font-size: 0.88rem;
+        opacity: 0.85;
+        line-height: 1.5;
+        max-width: 300px;
+        margin-bottom: 1rem;
+    }
+
+    .sreg-image-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 5px 12px;
+        border-radius: var(--radius-full);
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 0.8rem;
+    }
+
+    .sreg-image-badge i {
+        font-size: 0.82rem;
+        color: var(--accent);
+    }
+
+    .sreg-perks {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sreg-perks li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.82rem;
+        opacity: 0.9;
+    }
+
+    .sreg-perks li i {
+        font-size: 0.78rem;
+        color: #7eeaae;
+    }
+
+    /* --- Right Form Panel --- */
+    .sreg-form-panel {
+        flex: 1;
+        padding: 2.2rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: var(--white);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sreg-form-panel::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(253, 172, 172, 0.10), transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .sreg-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 0.2rem;
+    }
+
+    .sreg-brand-icon {
+        width: 42px;
+        height: 42px;
+        background: linear-gradient(135deg, var(--highlight), var(--accent));
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 5px 14px rgba(253, 121, 121, 0.25);
+        flex-shrink: 0;
+    }
+
+    .sreg-brand-icon i {
+        font-size: 1.15rem;
+        color: #fff;
+    }
+
+    .sreg-header h3 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.45rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        color: var(--text-color);
+        margin: 0;
+    }
+
+    .sreg-subtitle {
+        color: var(--text-light);
+        font-size: 0.85rem;
+        margin-bottom: 1.2rem;
+        line-height: 1.5;
+    }
+
+    /* Form Grid Layout */
+    .sreg-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .sreg-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem 1.1rem;
+    }
+
+    .sreg-field {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .sreg-field.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .sreg-field label {
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        letter-spacing: 0.01em;
+    }
+
+    .sreg-field label i {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+    }
+
+    .sreg-field input,
+    .sreg-field textarea {
+        padding: 9px 13px;
+        border: 2px solid #f0f0f0;
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 0.88rem;
+        transition: all 0.2s ease;
+        background: #fafafa;
+        outline: none;
+        color: var(--text-color);
+        width: 100%;
+    }
+
+    .sreg-field textarea {
+        resize: none;
+        min-height: 36px;
+        max-height: 36px;
+    }
+
+    .sreg-field input:focus,
+    .sreg-field textarea:focus {
+        border-color: var(--highlight);
+        background: var(--white);
+        box-shadow: 0 0 0 3px rgba(253, 121, 121, 0.08);
+    }
+
+    .sreg-field .helptext {
+        font-size: 0.68rem;
+        color: var(--text-muted);
+        margin-top: 1px;
+        line-height: 1.3;
+    }
+
+    .sreg-field .helptext ul {
+        margin: 0;
+        padding-left: 14px;
+        display: none;
+    }
+
+    .sreg-field .errorlist {
+        color: #e53e3e;
+        font-size: 0.76rem;
+        list-style-type: none;
+        padding: 0;
+        margin: 2px 0 0;
+    }
+
+    .sreg-field .errorlist li::before {
+        content: '\F33A';
+        font-family: 'bootstrap-icons';
+        margin-right: 3px;
+        font-size: 0.72rem;
+    }
+
+    /* Submit Button */
+    .sreg-submit-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        font-family: inherit;
+        border: none;
+        border-radius: var(--radius-full);
+        background: linear-gradient(145deg, var(--highlight), #FA6666);
+        color: var(--white);
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 6px 18px rgba(253, 121, 121, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 1rem;
+        letter-spacing: 0.01em;
+    }
+
+    .sreg-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px rgba(253, 121, 121, 0.4);
+    }
+
+    .sreg-submit-btn:active {
+        transform: translateY(0);
+    }
+
+    .sreg-submit-btn i {
+        font-size: 1rem;
+        transition: transform 0.2s ease;
+    }
+
+    .sreg-submit-btn:hover i {
+        transform: translateX(3px);
+    }
+
+    /* Footer Links */
+    .sreg-footer-links {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 1rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid #f0f0f0;
+        font-size: 0.85rem;
+        color: var(--text-light);
+    }
+
+    .sreg-footer-links a {
+        color: var(--highlight);
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        position: relative;
+    }
+
+    .sreg-footer-links a::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--highlight);
+        transition: width 0.25s ease;
+    }
+
+    .sreg-footer-links a:hover::after {
+        width: 100%;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 900px) {
+        .sreg-card {
+            flex-direction: column;
+            max-width: 560px;
+        }
+
+        .sreg-image-panel {
+            flex: none;
+            height: 200px;
+        }
+
+        .sreg-form-panel {
+            padding: 1.8rem 2rem;
+        }
+    }
+
+    @media (max-width: 540px) {
+        .sreg-form-panel {
+            padding: 1.5rem 1.2rem;
+        }
+
+        .sreg-form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sreg-wrapper">
+    <div class="sreg-card">
+
+        <!-- Left Image Panel -->
+        <div class="sreg-image-panel">
+            <img src="{% static 'images/seller_register.png' %}" alt="Bakery owner with cake display">
+            <div class="sreg-image-overlay"></div>
+            <div class="sreg-image-content">
+                <div class="sreg-image-badge">
+                    <i class="bi bi-shop-window"></i>
+                    Seller Partner
+                </div>
+                <h2>Grow Your<br>Bakery Business.</h2>
+                <p>Get a premium storefront, seamless logistics, and powerful analytics.</p>
+                <ul class="sreg-perks">
+                    <li><i class="bi bi-check-circle-fill"></i> Zero setup fee</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Integrated city-wide delivery</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Dedicated seller dashboard</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Form Panel -->
+        <div class="sreg-form-panel">
+            <div class="sreg-header">
+                <div class="sreg-brand-icon">
+                    <i class="bi bi-building-add"></i>
+                </div>
+                <h3>Become a Partner</h3>
+            </div>
+            <p class="sreg-subtitle">Fill out the application below to open your storefront on SirCake.</p>
+
+            <form method="post" class="sreg-form">
+                {% csrf_token %}
+
+                <div class="sreg-form-grid">
+                    <!-- Username -->
+                    <div class="sreg-field">
+                        <label>
+                            <i class="bi bi-person"></i>
+                            {{ form.username.label }}
+                        </label>
+                        {{ form.username }}
+                        {% if form.username.errors %}{{ form.username.errors }}{% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div class="sreg-field">
+                        <label>
+                            <i class="bi bi-envelope"></i>
+                            {{ form.email.label }}
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}{{ form.email.errors }}{% endif %}
+                    </div>
+
+                    <!-- Password -->
+                    <div class="sreg-field">
+                        <label>
+                            <i class="bi bi-lock"></i>
+                            {{ form.password1.label }}
+                        </label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}{{ form.password1.errors }}{% endif %}
+                    </div>
+
+                    <!-- Password Confirmation -->
+                    <div class="sreg-field">
+                        <label>
+                            <i class="bi bi-lock-fill"></i>
+                            {{ form.password2.label }}
+                        </label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}{{ form.password2.errors }}{% endif %}
+                    </div>
+
+                    <!-- Shop Name -->
+                    <div class="sreg-field">
+                        <label>
+                            <i class="bi bi-shop"></i>
+                            {{ form.shop_name.label }}
+                        </label>
+                        {{ form.shop_name }}
+                        {% if form.shop_name.errors %}{{ form.shop_name.errors }}{% endif %}
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="sreg-field">
+                        <label>
+                            <i class="bi bi-telephone"></i>
+                            {{ form.phone_number.label }}
+                        </label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}{{ form.phone_number.errors }}{% endif %}
+                    </div>
+
+                    <!-- Shop Description -->
+                    <div class="sreg-field">
+                        <label>
+                            <i class="bi bi-card-text"></i>
+                            {{ form.shop_description.label }}
+                        </label>
+                        {{ form.shop_description }}
+                        {% if form.shop_description.errors %}{{ form.shop_description.errors }}{% endif %}
+                    </div>
+
+                    <!-- Address -->
+                    <div class="sreg-field">
+                        <label>
+                            <i class="bi bi-geo-alt"></i>
+                            {{ form.address.label }}
+                        </label>
+                        {{ form.address }}
+                        {% if form.address.errors %}{{ form.address.errors }}{% endif %}
+                    </div>
+                </div>
+
+                <button type="submit" class="sreg-submit-btn">
+                    Submit Application
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="sreg-footer-links">
+                Already a partner?
+                <a href="{% url 'accounts:login' %}">Log in</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

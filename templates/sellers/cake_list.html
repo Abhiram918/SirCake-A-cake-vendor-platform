@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Cakes | SirCake{% endblock %}
+
+{% block extra_css %}
+<style>
+    .low-stock {
+        color: #F56565;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    {% include 'sellers/_sidebar.html' with active_tab='cakes' %}
+
+    <!-- Main Content -->
+    <div class="dashboard-content">
+        <header
+            style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--sp-4);">
+            <div>
+                <h1 style="font-size: 2rem;">My Cake Listings</h1>
+                <p style="color: var(--text-light);">Manage your sweet creations and catalog visibility.</p>
+            </div>
+            <a href="{% url 'sellers:cake_create' %}" class="btn btn-primary">Add New Cake</a>
+        </header>
+
+        <div class="table-container table-responsive">
+            <table class="table-styled">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cake in cakes %}
+                    <tr>
+                        <td>
+                            <img src="{{ cake.image.url }}" alt="{{ cake.name }}"
+                                style="width: 60px; height: 60px; object-fit: cover; border-radius: var(--radius-sm);">
+                        </td>
+                        <td>
+                            <div style="font-weight: 700; color: var(--text-color);">{{ cake.name }}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">{{ cake.category.name }}</div>
+                        </td>
+                        <td>₹{{ cake.price }}</td>
+                        <td>
+                            <span class="{% if cake.stock_quantity < 5 %}low-stock{% endif %}">
+                                {{ cake.stock_quantity }} items
+                            </span>
+                        </td>
+                        <td>
+                            {% if cake.is_available %}
+                            <span class="badge badge-delivered">Visible</span>
+                            {% else %}
+                            <span class="badge badge-cart">Hidden</span>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: right;">
+                            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                <a href="{% url 'sellers:cake_update' cake.pk %}"
+                                    class="btn btn-secondary btn-sm">Edit</a>
+                                <a href="{% url 'sellers:cake_delete' cake.pk %}" class="btn btn-secondary btn-sm"
+                                    style="color: #F56565;">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: var(--sp-6);">
+                            <p style="margin-bottom: var(--sp-2);">You haven't added any cakes yet.</p>
+                            <a href="{% url 'sellers:cake_create' %}" class="btn btn-primary">Start Adding Your First
+                                Cake</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

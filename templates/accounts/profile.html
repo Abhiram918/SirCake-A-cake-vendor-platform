@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Settings | SirCake 🍰{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 2rem;
+        padding: 2rem 0;
+        min-height: calc(100vh - 100px);
+    }
+
+    /* Sidebar Styles (Same as customer.html for consistency) */
+    .sidebar {
+        background: var(--surface-light);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar-header {
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        text-align: center;
+    }
+
+    .user-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--highlight), var(--accent));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin: 0 auto 1rem;
+    }
+
+    .user-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin: 0;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: var(--text-light);
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .nav-item:hover {
+        background: rgba(0, 0, 0, 0.03);
+        color: var(--highlight);
+    }
+
+    .nav-item.active {
+        background: var(--highlight);
+        color: white;
+    }
+
+    .nav-icon {
+        font-size: 1.2rem;
+    }
+
+    /* Profile Specific Styles */
+    .profile-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--highlight);
+        box-shadow: 0 0 0 3px rgba(253, 121, 121, 0.1);
+    }
+
+    .form-control[readonly] {
+        background-color: var(--surface-light);
+        cursor: not-allowed;
+    }
+
+    .edit-mode .readonly-field {
+        display: none;
+    }
+
+    .view-mode .edit-field {
+        display: none;
+    }
+
+    @media (max-width: 992px) {
+        .dashboard-container {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            position: static;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-avatar">
+                    {{ user.username|make_list|first|upper }}
+                </div>
+                <h3 class="user-name">{{ user.get_full_name|default:user.username }}</h3>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard:customer' %}" class="nav-item">
+                    <i class="bi bi-box-seam nav-icon"></i>
+                    <span>My Orders</span>
+                </a>
+                <a href="{% url 'accounts:profile' %}" class="nav-item active">
+                    <i class="bi bi-gear nav-icon"></i>
+                    <span>Account Setting</span>
+                </a>
+                <a href="{% url 'accounts:address_list' %}" class="nav-item">
+                    <i class="bi bi-geo-alt nav-icon"></i>
+                    <span>Saved Address</span>
+                </a>
+                <a href="{% url 'reviews:my_reviews' %}" class="nav-item">
+                    <i class="bi bi-star nav-icon"></i>
+                    <span>My Reviews</span>
+                </a>
+                <a href="{% url 'products:wishlist' %}" class="nav-item">
+                    <i class="bi bi-heart nav-icon"></i>
+                    <span>Wishlist</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content (View Only) -->
+        <main class="profile-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+                <div>
+                    <h1 style="font-size: 2rem; margin: 0;">Account Settings</h1>
+                    <p style="color: var(--text-light); font-size: 1rem; margin-top: 4px;">Your personal information and
+                        preferences.</p>
+                </div>
+                <a href="{% url 'accounts:profile_edit' %}" class="btn btn-secondary">Edit Details</a>
+            </div>
+
+            <div style="display: grid; gap: 2rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <div class="form-control" style="background: var(--surface-light);">{{ view_user.first_name|default:'Not provided' }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <div class="form-control" style="background: var(--surface-light);">{{ view_user.last_name|default:'Not provided' }}</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <div class="form-control" style="background: var(--surface-light);">{{ view_user.email }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <div class="form-control" style="background: var(--surface-light);">{{ profile.phone_number|default:'Not provided' }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Delivery Address</label>
+                    <div class="form-control"
+                        style="background: var(--surface-light); height: auto; min-height: 80px; white-space: pre-wrap;">
+                        {{ profile.address|default:'Not provided' }}</div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

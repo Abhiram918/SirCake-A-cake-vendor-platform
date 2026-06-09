@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Update Order Progress | SirCake{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    {% include 'sellers/_sidebar.html' with active_tab='orders' %}
+
+    <div class="dashboard-content">
+        <header style="margin-bottom: var(--sp-4);">
+            <h1 style="font-size: 2rem;">Update Order Status</h1>
+            <p style="color: var(--text-light);">Notify the customer about the progress of their cake.</p>
+        </header>
+
+        <div class="card" style="max-width: 500px;">
+            <div
+                style="display: flex; gap: var(--sp-3); margin-bottom: var(--sp-4); padding: var(--sp-2); background: var(--primary-bg); border-radius: var(--radius-md);">
+                <img src="{{ object.cake.image.url }}"
+                    style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-sm);">
+                <div>
+                    <h3 style="margin-bottom: 4px;">{{ object.cake.name }}</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Order #{{ object.order.id }} | x{{ object.quantity }}</p>
+                    <p style="font-size: 0.85rem; font-weight: 600; color: var(--highlight);">Client: {{ object.order.customer.username }}</p>
+                </div>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 1.1rem; margin-bottom: 12px;">What is the current
+                        status?</label>
+                    <select name="status" class="form-control" style="font-size: 1.1rem; height: 50px;">
+                        {% for value, label in form.fields.status.choices %}
+                        <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>{{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div
+                    style="background: rgba(0,0,0,0.02); padding: 12px; border-radius: var(--radius-md); margin-bottom: var(--sp-3); font-size: 0.85rem; color: var(--text-light);">
+                    <strong>Accepted:</strong> You are committed to baking this.<br>
+                    <strong>Baking:</strong> Mixing and ovens are on! <br>
+                    <strong>Ready:</strong> Packed and waiting for pickup.
+                </div>
+
+                <div style="display: flex; gap: var(--sp-2); justify-content: flex-end;">
+                    <a href="{% url 'sellers:order_list' %}" class="btn btn-secondary">Go Back</a>
+                    <button type="submit" class="btn btn-primary">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

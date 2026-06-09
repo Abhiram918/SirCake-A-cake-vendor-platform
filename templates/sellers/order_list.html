@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Orders Management | SirCake{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    {% include 'sellers/_sidebar.html' with active_tab='orders' %}
+
+    <div class="dashboard-content">
+        <header style="margin-bottom: var(--sp-4);">
+            <h1 style="font-size: 2rem;">Incoming Orders</h1>
+            <p style="color: var(--text-light);">Track and update the preparation status of your items.</p>
+        </header>
+
+        <div class="table-container table-responsive">
+            <table class="table-styled">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Product</th>
+                        <th>Customer / Address</th>
+                        <th>Delivery Date/Slot</th>
+                        <th>Item Status</th>
+                        <th style="text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_items %}
+                    <tr>
+                        <td style="font-weight: 700;">#{{ item.order.id }}</td>
+                        <td>
+                            <div style="font-weight: 600;">{{ item.cake.name }}</div>
+                            <div style="font-size: 0.8rem; color: var(--highlight);">x{{ item.quantity }} | ₹{{ item.price }}</div>
+                            {% if item.custom_message %}
+                            <div
+                                style="font-size: 0.75rem; color: var(--text-muted); background: #f7f7f7; padding: 4px; border-radius: 4px; margin-top: 4px; border-left: 2px solid var(--accent);">
+                                "{{ item.custom_message }}"
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="font-weight: 600;">{{ item.order.customer.username }}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">{{ item.order.shipping_address|default:"Address Hidden" }}</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 500;">{{ item.order.delivery_date|date:"M d, Y" }}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">{{ item.order.get_delivery_slot_display }}</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ item.status }}">{{ item.status }}</span>
+                        </td>
+                        <td style="text-align: right;">
+                            {% if item.order.status != 'delivered' %}
+                            <a href="{% url 'sellers:order_item_update' item.pk %}"
+                                class="btn btn-secondary btn-sm">Update Progress</a>
+                            {% else %}
+                            <span class="badge badge-delivered" style="opacity: 0.7;">Completed</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: var(--sp-6);">No orders assigned to you yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

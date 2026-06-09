@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Pending Approval | SirCake 🍰{% endblock %}
+
+{% block content %}
+<div
+    style="max-width: 550px; margin: 8rem auto; text-align: center; padding: 4rem 3rem; background: var(--white); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border: var(--glass-border); position: relative; overflow: hidden;">
+    <!-- Decorative Glow -->
+    <div
+        style="position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 200px; height: 100px; background: var(--primary-bg); filter: blur(40px); opacity: 0.6; z-index: 0; pointer-events: none;">
+    </div>
+
+    <div style="position: relative; z-index: 1;">
+        <div style="font-size: 4rem; opacity: 0.8; margin-bottom: 1.5rem; animation: float 6s ease-in-out infinite;">⏳
+        </div>
+        <h2 style="color: var(--text-color); margin-bottom: 1rem; font-size: 2rem; letter-spacing: -0.02em;">Account
+            Pending Approval</h2>
+
+        <p style="margin-bottom: 2rem; font-size: 1.1rem; color: var(--text-color); line-height: 1.6;">
+            Your registration has been successfully verified! An administrator is currently reviewing your application
+            before granting full system access.
+        </p>
+
+        <div
+            style="padding: 1.5rem; background: var(--surface-light); border-radius: var(--radius-md); margin-bottom: 2.5rem; text-align: left; display: flex; gap: 1rem; align-items: flex-start; border: 1px solid rgba(0,0,0,0.03);">
+            <div style="font-size: 1.5rem;">ℹ️</div>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0; line-height: 1.5;">
+                We process applications in the order they are received. Please check back shortly or reach out to
+                partner support if it has been over 48 hours.
+            </p>
+        </div>
+
+        <a href="{% url 'home' %}" class="btn btn-primary"
+            style="padding: 14px 2.5rem; font-size: 1.1rem; border-radius: 50px; text-decoration: none; width: 100%;">Return
+            to Home</a>
+    </div>
+</div>
+
+<style>
+    @keyframes float {
+        0% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+
+        100% {
+            transform: translateY(0px);
+        }
+    }
+</style>
+{% endblock %}

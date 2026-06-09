@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard | SirCake 🍰{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <div class="sidebar">
+        <h3 style="margin-bottom: 2rem; font-size: 1.5rem; color: var(--text-color); padding: 0 1rem;">Admin Panel</h3>
+        <a href="{% url 'dashboard:admin_approvals' %}" class="sidebar-link {% if active_tab == 'approvals' %}active{% endif %}">
+            <i class="bi bi-shield-check" style="font-size: 1.2rem; margin-right: 12px;"></i> Pending Approvals
+        </a>
+        <a href="{% url 'dashboard:admin_orders' %}" class="sidebar-link {% if active_tab == 'orders' %}active{% endif %}">
+            <i class="bi bi-truck" style="font-size: 1.2rem; margin-right: 12px;"></i> Order Assignment
+        </a>
+        <a href="{% url 'dashboard:admin_users' %}" class="sidebar-link {% if active_tab == 'users' %}active{% endif %}">
+            <i class="bi bi-people" style="font-size: 1.2rem; margin-right: 12px;"></i> User Management
+        </a>
+        <a href="{% url 'dashboard:admin_sellers' %}" class="sidebar-link {% if active_tab == 'sellers' %}active{% endif %}">
+            <i class="bi bi-shop" style="font-size: 1.2rem; margin-right: 12px;"></i> Active Sellers
+        </a>
+    </div>
+
+    <div class="dashboard-content">
+        <div style="margin-bottom: 3rem; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 1rem; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; letter-spacing: -0.02em;">System Administration</h2>
+                <p style="color: var(--text-light); font-size: 1.1rem;">Manage network approvals, users, and logistics routing.</p>
+            </div>
+        </div>
+        
+        {% block admin_content %}{% endblock %}
+    </div>
+</div>
+
+<style>
+    @media (max-width: 1024px) {
+        .dashboard-layout .dashboard-content > div:nth-child(3) {
+            grid-template-columns: 1fr;
+        }
+    }
+    .badge-pending { background: #FEFCBF; color: #975A16; }
+    .badge-accepted { background: #EBF8FF; color: #2B6CB0; }
+    .badge-baking { background: #E9D8FD; color: #6B46C1; }
+    .badge-ready { background: #C6F6D5; color: #22543D; }
+    .badge-delivered { background: #C6F6D5; color: #22543D; }
+    .badge-default { background: #EDF2F7; color: #4A5568; }
+</style>
+
+<!-- Custom Confirmation Modal (Global for Admin Area) -->
+<div id="customConfirmModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="card" style="width: 100%; max-width: 400px; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: popIn 0.3s ease-out forwards; border: 1px solid rgba(0,0,0,0.05);">
+        <h3 id="modalTitle" style="margin-bottom: 1rem; font-size: 1.4rem;">Confirm Action</h3>
+        <p id="modalMessage" style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.5; font-size: 0.95rem;"></p>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button class="btn btn-secondary" onclick="closeModal()" type="button" style="padding: 10px 20px;">Cancel</button>
+            <button class="btn" id="modalConfirmBtn" type="button" style="padding: 10px 20px; color: white;">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let formToSubmit = null;
+
+    function confirmAction(event, title, message, btnText, btnColor) {
+        event.preventDefault(); // Stop the form from submitting normally
+        
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalMessage').textContent = message;
+        
+        const confirmBtn = document.getElementById('modalConfirmBtn');
+        confirmBtn.textContent = btnText;
+        confirmBtn.style.background = btnColor;
+        
+        formToSubmit = event.target;
+        document.getElementById('customConfirmModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('customConfirmModal').style.display = 'none';
+        formToSubmit = null;
+    }
+
+    document.getElementById('modalConfirmBtn').addEventListener('click', function() {
+        if (formToSubmit) {
+            formToSubmit.submit();
+        }
+    });
+</script>
+
+<style>
+    @keyframes popIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+</style>
+{% endblock %}

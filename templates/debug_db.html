@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Debug DB</title>
+</head>
+
+<body>
+    <h1>Sellers</h1>
+    <ul>
+        {% for s in sellers %}
+        <li>{{ s.shop_name }} (User: {{ s.user.username }}, ID: {{ s.id }})</li>
+        {% endfor %}
+    </ul>
+    <h1>Cakes</h1>
+    <ul>
+        {% for c in cakes %}
+        <li>{{ c.name }} (Seller ID: {{ c.seller.id }})</li>
+        {% endfor %}
+    </ul>
+    <h1>Orders</h1>
+    <ul>
+        {% for o in orders %}
+        <li>Order #{{ o.id }} (Status: {{ o.status }}, Customer: {{ o.customer.username }})
+            <ul>
+                {% for item in o.items.all %}
+                <li>Item: {{ item.cake.name }} (Seller ID: {{ item.cake.seller.id }}), Qty: {{ item.quantity }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>

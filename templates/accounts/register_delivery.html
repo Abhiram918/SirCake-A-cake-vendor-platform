@@ -1,0 +1,502 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Drive with SirCake | SirCake{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== Delivery Registration Page Styles ===== */
+    .dreg-wrapper {
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .dreg-card {
+        max-width: 1000px;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        border-radius: var(--radius-lg);
+        box-shadow: 0 25px 60px rgba(72, 187, 120, 0.10), 0 8px 20px rgba(0, 0, 0, 0.06);
+        background: var(--white);
+        border: none;
+        animation: dregCardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes dregCardIn {
+        from { opacity: 0; transform: translateY(24px) scale(0.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* --- Left Image Panel --- */
+    .dreg-image-panel {
+        flex: 0 0 380px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dreg-image-panel img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 6s ease;
+    }
+
+    .dreg-card:hover .dreg-image-panel img {
+        transform: scale(1.04);
+    }
+
+    .dreg-image-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to top,
+            rgba(15, 20, 18, 0.80) 0%,
+            rgba(15, 20, 18, 0.30) 50%,
+            rgba(72, 187, 120, 0.08) 100%
+        );
+        z-index: 1;
+    }
+
+    .dreg-image-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 2rem 2rem 1.8rem;
+        z-index: 2;
+        color: #fff;
+    }
+
+    .dreg-image-content h2 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.5rem;
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+    }
+
+    .dreg-image-content p {
+        font-size: 0.9rem;
+        opacity: 0.85;
+        line-height: 1.5;
+        max-width: 300px;
+        margin-bottom: 1rem;
+    }
+
+    .dreg-image-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 5px 12px;
+        border-radius: var(--radius-full);
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 0.8rem;
+    }
+
+    .dreg-image-badge i {
+        font-size: 0.82rem;
+        color: #7eeaae;
+    }
+
+    .dreg-perks {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .dreg-perks li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.82rem;
+        opacity: 0.9;
+    }
+
+    .dreg-perks li i {
+        font-size: 0.78rem;
+        color: #7eeaae;
+    }
+
+    /* --- Right Form Panel --- */
+    .dreg-form-panel {
+        flex: 1;
+        padding: 2.8rem 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: var(--white);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dreg-form-panel::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(72, 187, 120, 0.08), transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .dreg-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 0.3rem;
+    }
+
+    .dreg-brand-icon {
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, #48BB78, #38A169);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 5px 14px rgba(72, 187, 120, 0.3);
+        flex-shrink: 0;
+    }
+
+    .dreg-brand-icon i {
+        font-size: 1.2rem;
+        color: #fff;
+    }
+
+    .dreg-header h3 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.55rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        color: var(--text-color);
+        margin: 0;
+    }
+
+    .dreg-subtitle {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 1.8rem;
+        line-height: 1.5;
+    }
+
+    /* Form Grid Layout */
+    .dreg-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .dreg-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem 1.2rem;
+    }
+
+    .dreg-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .dreg-field.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .dreg-field label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        letter-spacing: 0.01em;
+    }
+
+    .dreg-field label i {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .dreg-field input {
+        padding: 11px 14px;
+        border: 2px solid #f0f0f0;
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 0.92rem;
+        transition: all 0.2s ease;
+        background: #fafafa;
+        outline: none;
+        color: var(--text-color);
+        width: 100%;
+    }
+
+    .dreg-field input:focus {
+        border-color: #48BB78;
+        background: var(--white);
+        box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+    }
+
+    .dreg-field .helptext {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 1px;
+        line-height: 1.3;
+    }
+
+    .dreg-field .helptext ul {
+        margin: 0;
+        padding-left: 14px;
+        display: none;
+    }
+
+    .dreg-field .errorlist {
+        color: #e53e3e;
+        font-size: 0.78rem;
+        list-style-type: none;
+        padding: 0;
+        margin: 2px 0 0;
+    }
+
+    .dreg-field .errorlist li::before {
+        content: '\F33A';
+        font-family: 'bootstrap-icons';
+        margin-right: 3px;
+        font-size: 0.72rem;
+    }
+
+    /* Submit Button - Green theme */
+    .dreg-submit-btn {
+        width: 100%;
+        padding: 13px;
+        font-size: 0.98rem;
+        font-weight: 600;
+        font-family: inherit;
+        border: none;
+        border-radius: var(--radius-full);
+        background: linear-gradient(145deg, #48BB78, #38A169);
+        color: var(--white);
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 6px 18px rgba(72, 187, 120, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 1.5rem;
+        letter-spacing: 0.01em;
+    }
+
+    .dreg-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px rgba(72, 187, 120, 0.4);
+    }
+
+    .dreg-submit-btn:active {
+        transform: translateY(0);
+    }
+
+    .dreg-submit-btn i {
+        font-size: 1rem;
+        transition: transform 0.2s ease;
+    }
+
+    .dreg-submit-btn:hover i {
+        transform: translateX(3px);
+    }
+
+    /* Footer Links */
+    .dreg-footer-links {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 1.2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f0f0f0;
+        font-size: 0.88rem;
+        color: var(--text-light);
+    }
+
+    .dreg-footer-links a {
+        color: #48BB78;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        position: relative;
+    }
+
+    .dreg-footer-links a::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #48BB78;
+        transition: width 0.25s ease;
+    }
+
+    .dreg-footer-links a:hover::after {
+        width: 100%;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 900px) {
+        .dreg-card {
+            flex-direction: column;
+            max-width: 520px;
+        }
+
+        .dreg-image-panel {
+            flex: none;
+            height: 220px;
+        }
+
+        .dreg-form-panel {
+            padding: 2rem 2rem;
+        }
+    }
+
+    @media (max-width: 540px) {
+        .dreg-form-panel {
+            padding: 1.5rem 1.2rem;
+        }
+
+        .dreg-form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dreg-wrapper">
+    <div class="dreg-card">
+
+        <!-- Left Image Panel -->
+        <div class="dreg-image-panel">
+            <img src="{% static 'images/delivery_register.png' %}" alt="Delivery rider on city street">
+            <div class="dreg-image-overlay"></div>
+            <div class="dreg-image-content">
+                <div class="dreg-image-badge">
+                    <i class="bi bi-bicycle"></i>
+                    Delivery Partner
+                </div>
+                <h2>Deliver Joy<br>Across the City.</h2>
+                <p>Earn securely by delivering the finest artisanal treats directly to customers.</p>
+                <ul class="dreg-perks">
+                    <li><i class="bi bi-check-circle-fill"></i> Complete schedule flexibility</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Mobile-native delivery dashboard</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Fast, reliable earnings</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Form Panel -->
+        <div class="dreg-form-panel">
+            <div class="dreg-header">
+                <div class="dreg-brand-icon">
+                    <i class="bi bi-truck"></i>
+                </div>
+                <h3>Become a Courier</h3>
+            </div>
+            <p class="dreg-subtitle">Register your vehicle to gain access to the SirCake delivery network.</p>
+
+            <form method="post" class="dreg-form">
+                {% csrf_token %}
+
+                <div class="dreg-form-grid">
+                    <!-- Username -->
+                    <div class="dreg-field">
+                        <label>
+                            <i class="bi bi-person"></i>
+                            {{ form.username.label }}
+                        </label>
+                        {{ form.username }}
+                        {% if form.username.errors %}{{ form.username.errors }}{% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div class="dreg-field">
+                        <label>
+                            <i class="bi bi-envelope"></i>
+                            {{ form.email.label }}
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}{{ form.email.errors }}{% endif %}
+                    </div>
+
+                    <!-- Password -->
+                    <div class="dreg-field">
+                        <label>
+                            <i class="bi bi-lock"></i>
+                            {{ form.password1.label }}
+                        </label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}{{ form.password1.errors }}{% endif %}
+                    </div>
+
+                    <!-- Password Confirmation -->
+                    <div class="dreg-field">
+                        <label>
+                            <i class="bi bi-lock-fill"></i>
+                            {{ form.password2.label }}
+                        </label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}{{ form.password2.errors }}{% endif %}
+                    </div>
+
+                    <!-- Vehicle Details -->
+                    <div class="dreg-field">
+                        <label>
+                            <i class="bi bi-scooter"></i>
+                            {{ form.vehicle_details.label }}
+                        </label>
+                        {{ form.vehicle_details }}
+                        {% if form.vehicle_details.errors %}{{ form.vehicle_details.errors }}{% endif %}
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="dreg-field">
+                        <label>
+                            <i class="bi bi-telephone"></i>
+                            {{ form.phone_number.label }}
+                        </label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}{{ form.phone_number.errors }}{% endif %}
+                    </div>
+                </div>
+
+                <button type="submit" class="dreg-submit-btn">
+                    Submit Application
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="dreg-footer-links">
+                Already registered?
+                <a href="{% url 'accounts:login' %}">Log in to dashboard</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

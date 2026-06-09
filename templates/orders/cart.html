@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Cart | SirCake 🍰{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; padding-top: 3rem; padding-bottom: 5rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 2rem; letter-spacing: -0.03em;">Your Cart</h1>
+
+    {% if order.items.count > 0 %}
+    <div class="table-container" style="margin-bottom: 2.5rem;">
+        <table class="table-styled">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th style="text-align: center;">Quantity</th>
+                    <th style="text-align: right;">Total</th>
+                    <th style="text-align: center; width: 100px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            {% if item.cake.image %}
+                            <img src="{{ item.cake.image.url }}"
+                                style="width: 48px; height: 48px; object-fit: cover; border-radius: var(--radius-sm);">
+                            {% else %}
+                            <div
+                                style="width: 48px; height: 48px; background: var(--primary-bg); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                🎂</div>
+                            {% endif %}
+
+                            <div>
+                                {% if item.cake %}
+                                <strong style="color: var(--text-color); font-size: 1.05rem;">{{ item.cake.name }}</strong>
+                                <br>
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">{{ item.cake.seller.shop_name }}</span>
+                                {% else %}
+                                <span style="color: #F56565;">Item Unavailable</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td style="font-weight: 500;">{{ item.price }}</td>
+                    <td style="text-align: center; font-weight: 600;">{{ item.quantity }}</td>
+                    <td style="text-align: right; font-weight: 700; color: var(--text-color);">{% widthratio item.price 1 item.quantity %}</td>
+                    <td style="text-align: center;">
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="remove_id" value="{{ item.id }}">
+                            <button type="submit"
+                                style="background: none; border: none; color: #F56565; cursor: pointer; padding: 8px; border-radius: 50%; transition: var(--transition-fast);"
+                                onmouseover="this.style.background='rgba(245, 101, 101, 0.1)'"
+                                onmouseout="this.style.background='none'">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18"></path>
+                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Order Summary Footer -->
+    <div class="card"
+        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+        <div>
+            <p
+                style="color: var(--text-light); font-size: 0.95rem; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">
+                Subtotal</p>
+            <h3 style="font-size: 2.2rem; margin: 0; color: var(--text-color); letter-spacing: -0.02em;">{{ order.total_amount }}</h3>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <a href="{% url 'products:cake_list' %}" class="btn btn-secondary">Continue Shopping</a>
+            <a href="{% url 'orders:checkout' %}" class="btn btn-primary"
+                style="padding: 12px 32px; font-size: 1.1rem; border-radius: var(--radius-full);">Checkout →</a>
+        </div>
+    </div>
+
+    {% else %}
+    <div
+        style="text-align: center; padding: 5rem 2rem; background: var(--surface-light); border-radius: var(--radius-lg); border: var(--glass-border);">
+        <div style="font-size: 4rem; opacity: 0.5; margin-bottom: 1.5rem; filter: grayscale(1);">🛒</div>
+        <h2 style="font-size: 2rem; margin-bottom: 1rem; color: var(--text-color);">Your cart is empty</h2>
+        <p
+            style="color: var(--text-light); font-size: 1.1rem; margin-bottom: 2.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+            Looks like you haven't added any premium pastries to your cart yet.</p>
+        <a href="{% url 'products:cake_list' %}" class="btn btn-primary"
+            style="padding: 12px 32px; font-size: 1.1rem; border-radius: var(--radius-full);">Explore the Catalog</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
