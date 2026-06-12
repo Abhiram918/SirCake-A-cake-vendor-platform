@@ -1,94 +1,193 @@
 # 🍰 SirCake
 
-SirCake is a comprehensive cake vendor platform built with Django. It provides a complete ecosystem for cake enthusiasts, sellers, and delivery personnel to interact seamlessly. From browsing a delectable menu of cakes to managing bakery kitchens and delivery logistics, SirCake handles it all.
+A full-featured multi-vendor cake ordering platform built with Django. SirCake connects customers, bakers, and delivery personnel through dedicated dashboards and workflows, providing a complete e-commerce ecosystem for cake ordering and delivery.
+
+![SirCake Banner](screenshots/banner.png)
+
+<p align="center">
+  <a href="https://github.com/Abhiram918/SirCake-A-cake-vendor-platform">
+    <img src="https://img.shields.io/badge/Source_Code-GitHub-black?style=for-the-badge" />
+  </a>
+</p>
+
+---
+
+## 📸 Screenshots
+
+### Home Page
+
+![Home Page](screenshots/home.png)
+
+### Product Catalog
+
+![Products](screenshots/products.png)
+
+### Seller Dashboard
+
+![Seller Dashboard](screenshots/seller-dashboard.png)
+
+### Delivery Dashboard
+
+![Delivery Dashboard](screenshots/delivery-dashboard.png)
+
+---
 
 ## ✨ Features
 
-- **Multi-User Roles**: Custom user model supporting Customers, Sellers (Bakers), and Delivery Boys.
-- **Product Management**: Categorized cake listings (e.g., Wedding Cakes, Birthday Cakes).
-- **Shopping Cart & Checkout**: Robust order management and tracking.
-- **Seller Dashboard**: A dedicated space for bakers to manage their inventory and view incoming baking tasks.
-- **Delivery Management**: A dashboard for delivery personnel to track and manage cake deliveries.
-- **Reviews & Ratings**: Integrated feedback system allowing customers to leave 1-5 star ratings and comments on cakes.
-- **Payments Integration**: Ready for payment processing.
+### Customer Features
 
-## 🏗️ Architecture & Apps
+* Browse cakes by category
+* View detailed product information
+* Add products to cart
+* Place and track orders
+* Leave reviews and ratings
 
-The project is structured into modular Django apps, each handling a specific domain:
+### Seller Features
 
-- `sircake`: The main configuration and routing hub.
-- `accounts`: Manages user authentication, registration, and role-based access.
-- `products`: Handles the catalog of cakes and their categories.
-- `orders`: Manages the shopping cart and user order history.
-- `sellers`: The dedicated interface for bakers to add new products and manage their kitchen.
-- `delivery`: Interface for delivery drivers to manage their assignments.
-- `reviews`: Manages customer feedback and ratings.
-- `dashboard`: General dashboard views and analytics.
-- `payments`: Handles order transactions.
+* Manage cake inventory
+* Add and update products
+* View incoming orders
+* Track order status
+
+### Delivery Features
+
+* View assigned deliveries
+* Update delivery status
+* Manage delivery workflow
+
+### System Features
+
+* Custom user authentication
+* Role-based access control
+* Product categorization
+* Order management
+* Review and rating system
+* Payment-ready architecture
+
+---
+
+## 🏗️ Architecture
+
+The project follows a modular Django architecture:
+
+```text
+SirCake
+│
+├── accounts      # Authentication & User Roles
+├── products      # Cake Catalog & Categories
+├── orders        # Cart & Order Management
+├── sellers       # Seller Dashboard
+├── delivery      # Delivery Dashboard
+├── reviews       # Ratings & Reviews
+├── dashboard     # Analytics & Overview
+├── payments      # Payment Processing
+└── sircake       # Project Configuration
+```
+
+---
 
 ## 🚀 Tech Stack
 
-- **Backend**: Python, Django 5.2.11
-- **Database**: SQLite (default, ready for PostgreSQL/MySQL integration)
-- **Image Processing**: Pillow
-- **Frontend**: Django Templates, HTML, CSS, JavaScript (served via `static/`)
+| Category         | Technologies             |
+| ---------------- | ------------------------ |
+| Backend          | Python, Django           |
+| Database         | SQLite                   |
+| Frontend         | HTML, CSS, JavaScript    |
+| Templates        | Django Templates         |
+| Image Processing | Pillow                   |
+| Authentication   | Custom Django User Model |
 
-## 🛠️ Installation & Setup
+---
 
-Follow these steps to run SirCake locally:
+## 🛠️ Installation
 
-### 1. Prerequisites
-- Python 3.8+ installed (ensure Python is added to your PATH).
+### Clone Repository
 
-### 2. Clone the Repository
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/Abhiram918/SirCake-A-cake-vendor-platform.git
 cd SirCake
 ```
 
-### 3. Set Up Virtual Environment
-Create and activate a virtual environment to isolate dependencies:
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
+### Create Virtual Environment
 
-# macOS / Linux
-python3 -m venv venv
+```bash
+python -m venv venv
+```
+
+### Activate Environment
+
+Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+Linux / macOS:
+
+```bash
 source venv/bin/activate
 ```
 
-### 4. Install Dependencies
+### Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Database Setup
-Run migrations to create the database schema:
+### Apply Migrations
+
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 6. Create Superuser (Admin)
-Create an admin account to access the Django backend:
+### Create Admin User
+
 ```bash
 python manage.py createsuperuser
 ```
 
-### 7. Run the Development Server
+### Run Development Server
+
 ```bash
 python manage.py runserver
 ```
 
-Open your browser and navigate to:
-- **Main Site**: `http://127.0.0.1:8000/`
-- **Admin Panel**: `http://127.0.0.1:8000/admin/`
+Visit:
 
-## 🤝 Contributing
+```text
+http://127.0.0.1:8000/
+```
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+---
 
-## 📝 License
+## 🎯 Key Learning Outcomes
 
-This project is licensed under the MIT License.
+* Building scalable Django applications
+* Implementing role-based access control
+* Managing e-commerce workflows
+* Designing modular application architecture
+* Handling user-generated reviews and ratings
+* Managing seller and delivery operations
+
+---
+
+## 🚀 Future Improvements
+
+* Stripe/Razorpay Integration
+* Email Notifications
+* Real-Time Order Tracking
+* Inventory Analytics
+* Recommendation System
+* Mobile Application
+
+---
+
+## 👨‍💻 Author
+
+**Abhiram Shibu**
+
+* GitHub: https://github.com/Abhiram918
+* LinkedIn: https://linkedin.com/in/abhiramshibu
+
+---
